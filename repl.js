@@ -1,46 +1,46 @@
 import readline from 'node:readline/promises';
-import {aichat, aigen} from './api/ollama.js';
-import {ai_chat, get_models} from './api/copilot.js';
+import { aichat, aigen } from './api/ollama.js';
+import { ai_chat, get_models } from './api/copilot.js';
 
-var rl = readline.createInterface({
+const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
-
+  output: process.stdout,
 });
 
-let debug=false;
+let debug = false;
 
-export const repl=async (options) => {
-	debug=options?.debug;
-while(true) {
-let answer= (await rl.question(">>> "))?.trim();
-	if(answer==='/debug') {
-		debug=!debug;
-		options.debug=debug;
-		continue;
-	}
-	if(answer==='/info') {
-		console.log(options);
-		continue;
-	}
-	if(answer==='/quit') {
-		break;
-	}
-	//await aichat(answer, options);
-	switch (options.provider) {
-		case 'copilot':
-			if(answer==='/models') {
-				await get_models(options);
-				continue;
-			}
-			await ai_chat(answer, options);
-			break;
-		case 'ollama':
-		default:
-			await aigen(answer, options);
-			break;
-	}
-}
-	console.log('bye.');
-   rl.close();
-}
+// eslint-disable-next-line import/prefer-default-export
+export const repl = async options => {
+  debug = options?.debug;
+  while (true) {
+    const answer = (await rl.question('>>> '))?.trim();
+    if (answer === '/debug') {
+      debug = !debug;
+      options.debug = debug;
+      continue;
+    }
+    if (answer === '/info') {
+      console.log(options);
+      continue;
+    }
+    if (answer === '/quit') {
+      break;
+    }
+    // await aichat(answer, options);
+    switch (options.provider) {
+      case 'copilot':
+        if (answer === '/models') {
+          await get_models(options);
+          continue;
+        }
+        await ai_chat(answer, options);
+        break;
+      case 'ollama':
+      default:
+        await aigen(answer, options);
+        break;
+    }
+  }
+  console.log('bye.');
+  rl.close();
+};
