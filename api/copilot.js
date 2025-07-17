@@ -1,5 +1,6 @@
 import got from 'got';
 import fs from 'fs';
+import { get_messages, add_message } from '../history.js';
 
 const TOKENS_FILE = './tokens/copilot_tokens.json';
 
@@ -67,6 +68,12 @@ const make_request = async (req, options) => {
       let resp;
       resp = options?.debug ? await got(req).text() : await got(req).json();
       console.log(options?.debug ? resp : resp?.choices[0]?.message?.content);
+      if (resp?.choices[0]?.message?.content) {
+        add_message({
+          role: resp.choice[0].message.role,
+          content: resp.choices[0].message.content,
+        });
+      }
       retry = 0;
     } catch (e) {
       console.error('err ...', e);
@@ -95,6 +102,7 @@ export const get_models = async options => {
 };
 export const ai_chat = async (prompt, options) => {
   const chat_token = await get_chat_token();
+  add_message({ role: 'user', content: prompt });
   const req = {
     method: 'POST',
     url: 'https://api.githubcopilot.com/chat/completions',
@@ -110,7 +118,7 @@ export const ai_chat = async (prompt, options) => {
       top_p: 1,
       n: 1,
       stream: false,
-      messages: [{ role: 'user', content: prompt }],
+      messages: get_messages(),
     }),
   };
   // console.log(req);

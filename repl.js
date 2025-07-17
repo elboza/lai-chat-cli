@@ -37,7 +37,8 @@ export const repl = async options => {
         break;
       case 'ollama':
       default:
-        await aigen(answer, options);
+        //await aigen(answer, options);
+        await aichat(answer, options);
         break;
     }
   }
