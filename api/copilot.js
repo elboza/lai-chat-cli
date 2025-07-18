@@ -6,8 +6,8 @@ import { get_base_dir } from '#root/defaults.js';
 const TOKENS_FILE = 'tokens/copilot_tokens.json';
 
 export const read_tokens = () => {
-  const fileContents = fs.readFileSync(`${get_base_dir()}/${TOKENS_FILE}`).toString();
   try {
+    const fileContents = fs.readFileSync(`${get_base_dir()}/${TOKENS_FILE}`).toString();
     return JSON.parse(fileContents);
   } catch (e) {
     console.log('error reading tokens ...', e);
@@ -69,6 +69,9 @@ const make_request = async (req, options) => {
       let resp;
       resp = options?.debug ? await got(req).text() : await got(req).json();
       console.log(options?.debug ? resp : resp?.choices[0]?.message?.content);
+      if (options.debug) {
+        resp = JSON.parse(resp);
+      }
       if (resp?.choices[0]?.message?.content) {
         add_message({
           role: resp.choices[0].message.role,

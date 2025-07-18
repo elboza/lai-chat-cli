@@ -1,6 +1,7 @@
 import readline from 'node:readline/promises';
 import { aichat, aigen } from '#root/api/ollama.js';
 import { ai_chat, get_models } from '#root/api/copilot.js';
+import { reset_messages } from '#root/history.js';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -23,6 +24,10 @@ export const repl = async options => {
       console.log(options);
       continue;
     }
+    if (answer === '/newchat') {
+      reset_messages();
+      continue;
+    }
     if (answer === '/quit') {
       break;
     }
@@ -37,7 +42,7 @@ export const repl = async options => {
         break;
       case 'ollama':
       default:
-        //await aigen(answer, options);
+        // await aigen(answer, options);
         await aichat(answer, options);
         break;
     }
