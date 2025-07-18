@@ -1,11 +1,12 @@
 import got from 'got';
 import fs from 'fs';
-import { get_messages, add_message } from '../history.js';
+import { get_messages, add_message } from '#root/history.js';
+import { get_base_dir } from '#root/defaults.js';
 
-const TOKENS_FILE = './tokens/copilot_tokens.json';
+const TOKENS_FILE = 'tokens/copilot_tokens.json';
 
 export const read_tokens = () => {
-  const fileContents = fs.readFileSync(TOKENS_FILE).toString();
+  const fileContents = fs.readFileSync(`${get_base_dir()}/${TOKENS_FILE}`).toString();
   try {
     return JSON.parse(fileContents);
   } catch (e) {
@@ -16,7 +17,7 @@ export const read_tokens = () => {
 const write_tokens = tokens => {
   try {
     const data = JSON.stringify(tokens);
-    fs.writeFileSync(TOKENS_FILE, data);
+    fs.writeFileSync(`${get_base_dir()}/${TOKENS_FILE}`, data);
   } catch (e) {
     console.log('error writing tokens ... ', e);
   }

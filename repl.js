@@ -1,6 +1,6 @@
 import readline from 'node:readline/promises';
-import { aichat, aigen } from './api/ollama.js';
-import { ai_chat, get_models } from './api/copilot.js';
+import { aichat, aigen } from '#root/api/ollama.js';
+import { ai_chat, get_models } from '#root/api/copilot.js';
 
 const rl = readline.createInterface({
   input: process.stdin,

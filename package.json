@@ -2,7 +2,11 @@
   "name": "lai",
   "version": "1.0.0",
   "main": "ai.js",
+  "bin": "lai",
   "type": "module",
+  "imports": {
+    "#root/*": "./*"
+  },
   "scripts": {
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",

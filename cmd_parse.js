@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { get_default_provider, get_default_model } from './defaults.js';
+import { get_default_provider, get_default_model } from '#root/defaults.js';
 
 const program = new Command();
 

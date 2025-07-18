@@ -1,5 +1,5 @@
 import ollama from 'ollama';
-import { get_messages, add_message } from '../history.js';
+import { get_messages, add_message } from '#root/history.js';
 
 export const aichat = async (prompt, options) => {
   console.log(`\n<thinking ...>\n`);

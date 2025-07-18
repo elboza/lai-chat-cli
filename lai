@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
 set -e
-node ai.js $@
+BASH_DIR="$(dirname "$(realpath "$0")")"
+node "${BASH_DIR}/ai.js" $@
 
