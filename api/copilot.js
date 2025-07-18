@@ -47,9 +47,9 @@ const get_chat_token = async (new_token = false) => {
     },
   };
   try {
-    console.log('chat token req ...', req);
+    // console.log('chat token req ...', req);
     const resp = await got(req).json();
-    console.log('chat token resp ...', resp);
+    // console.log('chat token resp ...', resp);
     const tokens = read_tokens();
     tokens.chat_token = resp?.token;
     write_tokens(tokens);
@@ -67,8 +67,8 @@ const make_request = async (req, options) => {
   while (retry > 0) {
     try {
       let resp;
-      resp = options?.debug ? await got(req).text() : await got(req).json();
-      console.log(options?.debug ? resp : resp?.choices[0]?.message?.content);
+      resp = (options?.debug || options?.raw_output) ? await got(req).text() : await got(req).json();
+      console.log((options?.debug || options?.raw_output) ? resp : resp?.choices[0]?.message?.content);
       if (options.debug) {
         resp = JSON.parse(resp);
       }
@@ -80,7 +80,8 @@ const make_request = async (req, options) => {
       }
       retry = 0;
     } catch (e) {
-      console.error('err ...', e);
+      // console.error('err ...', e);
+      console.log('...');
       retry--;
       const chat_token = await get_chat_token(true);
       req.headers.Authorization = `Bearer ${chat_token}`;
@@ -91,7 +92,6 @@ const make_request = async (req, options) => {
   }
 };
 export const get_models = async options => {
-  console.log('copilot get models ...', options);
   const chat_token = await get_chat_token();
   const req = {
     method: 'GET',
@@ -102,7 +102,7 @@ export const get_models = async options => {
       'Editor-Version': 'vscode/1.80.1',
     },
   };
-  await make_request(req, { ...options, debug: true });
+  await make_request(req, { ...options, raw_output: true });
 };
 export const ai_chat = async (prompt, options) => {
   const chat_token = await get_chat_token();
