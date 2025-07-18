@@ -70,7 +70,7 @@ const make_request = async (req, options) => {
       console.log(options?.debug ? resp : resp?.choices[0]?.message?.content);
       if (resp?.choices[0]?.message?.content) {
         add_message({
-          role: resp.choice[0].message.role,
+          role: resp.choices[0].message.role,
           content: resp.choices[0].message.content,
         });
       }
