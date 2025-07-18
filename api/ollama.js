@@ -8,19 +8,30 @@ export const aichat = async (prompt, options) => {
     model: options?.model || 'llama3.2',
     // system: systemPrompt,
     messages: get_messages(),
-    stream: false,
+    stream: !!options?.stream,
     // format: "json",
   };
   if (options?.debug) {
     console.log('req ...', req);
   }
   const response = await ollama.chat(req);
+  if (options?.stream) {
+    const streamed = { role: '', content: '' };
+    for await (const chunk of response) {
+      process.stdout.write(chunk?.message?.content);
+      streamed.content += chunk?.message?.content;
+      streamed.role = chunk?.message?.role;
+    }
+    response.message = streamed;
+  }
   if (response?.message) {
     add_message(response.message);
   }
 
   // console.log(response.message?.tool_calls);
-  console.log(options?.debug === true ? response : response?.message?.content);
+  if (!options?.stream) {
+    console.log(options?.debug === true ? response : response?.message?.content);
+  }
   console.log('');
   //  const responseObject = JSON.parse(response.response.trim());
   //  executeFunction(responseObject.functionName, responseObject.parameters);

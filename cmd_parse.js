@@ -26,7 +26,8 @@ export const cmd_parse = args => {
     .option('-d, --debug')
     .option('-p, --provider <string>')
     .option('-m, --model <string>')
-    .option('-f, --system-prompt <string>');
+    .option('-f, --system-prompt <string>')
+    .option('-s, --stream');
 
   program.parse(args);
 
@@ -49,6 +50,7 @@ export const cmd_parse = args => {
     provider,
     debug: !!options.debug,
     system_prompt,
+    stream: !!options.stream,
   };
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);

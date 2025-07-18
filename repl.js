@@ -46,12 +46,17 @@ export const repl = async options => {
     if (answer === '/quit' || answer === '/bye') {
       break;
     }
+    if (answer === '/stream') {
+      options.stream = !options.stream;
+      continue;
+    }
     if (answer === '/help') {
       console.log('available commands:');
       console.log('/quit or /bye : exit the repl');
       console.log('/debug : toggle debug info');
       console.log('/info : show current settings');
       console.log('/newchat : start a new chat');
+      console.log('/stream : toggle stream chat');
       console.log('/help : this help');
       console.log('/cmd : execute a shell command (showing its original output) and submit its output to the model');
       console.log(
