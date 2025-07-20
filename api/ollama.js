@@ -15,6 +15,9 @@ export const aichat = async (prompt, options) => {
     console.log('req ...', req);
   }
   const response = await ollama.chat(req);
+  if (options?.show_model_name) {
+    console.log(`[ ${response.model} ]:`);
+  }
   if (options?.stream) {
     const streamed = { role: '', content: '' };
     for await (const chunk of response) {
@@ -50,6 +53,9 @@ export const aigen = async (prompt, options) => {
     console.log('req ...', req);
   }
   const response = await ollama.generate(req);
+  if (options?.show_model_name) {
+    console.log(`[ ${response.model} ]:`);
+  }
 
   console.log(options?.debug ? response : response?.response);
   console.log('');

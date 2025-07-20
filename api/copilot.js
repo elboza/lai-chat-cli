@@ -67,8 +67,11 @@ const make_request = async (req, options) => {
   while (retry > 0) {
     try {
       let resp;
-      resp = (options?.debug || options?.raw_output) ? await got(req).text() : await got(req).json();
-      console.log((options?.debug || options?.raw_output) ? resp : resp?.choices[0]?.message?.content);
+      resp = options?.debug || options?.raw_output ? await got(req).text() : await got(req).json();
+      if (options?.show_model_name) {
+        console.log(`[ ${response.model} ]:`);
+      }
+      console.log(options?.debug || options?.raw_output ? resp : resp?.choices[0]?.message?.content);
       if (options.debug) {
         resp = JSON.parse(resp);
       }

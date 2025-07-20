@@ -3,6 +3,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import { aichat, aigen } from '#root/api/ollama.js';
 import { ai_chat, get_models } from '#root/api/copilot.js';
+import { aichat as google_aichat, aigen as google_aigen } from '#root/api/google.js';
 import { add_message, reset_messages } from '#root/history.js';
 
 function read_file(filename) {
@@ -50,6 +51,10 @@ export const repl = async options => {
       options.stream = !options.stream;
       continue;
     }
+    if (answer === '/showmodelname') {
+      options.show_model_name = !options.show_model_name;
+      continue;
+    }
     if (answer === '/help') {
       console.log('available commands:');
       console.log('/quit or /bye : exit the repl');
@@ -67,6 +72,7 @@ export const repl = async options => {
       console.log('/file : read a file and add it it the chat system info');
       console.log('/newmodel : set a new model. the format is provider:model');
       console.log('/models : show available models');
+      console.log('/showmodelname : toggle show model name in response');
       continue;
     }
     const [command, ...args] = answer.split(' ');
@@ -118,6 +124,11 @@ export const repl = async options => {
         }
         await ai_chat(answer, options);
         break;
+      case 'google':
+        // await google_aigen(answer, options);
+        await google_aichat(answer, options);
+        break;
+
       case 'ollama':
       default:
         // await aigen(answer, options);
