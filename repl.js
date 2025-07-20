@@ -1,9 +1,9 @@
 import readline from 'node:readline/promises';
 import { execSync } from 'child_process';
 import fs from 'fs';
-import { aichat, aigen } from '#root/api/ollama.js';
-import { ai_chat, get_models } from '#root/api/copilot.js';
-import { aichat as google_aichat, aigen as google_aigen } from '#root/api/google.js';
+import { aichat, aigen } from '#root/lib/ollama.js';
+import { ai_chat, get_models } from '#root/lib/copilot.js';
+import { aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
 import { add_message, reset_messages } from '#root/history.js';
 
 function read_file(filename) {

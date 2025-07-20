@@ -1,9 +1,20 @@
 import { Command } from 'commander';
 import fs from 'fs';
-import { get_default_provider, get_default_model } from '#root/defaults.js';
+import { get_base_dir, get_default_provider, get_default_model } from '#root/defaults.js';
 import { add_message } from '#root/history.js';
 
 const program = new Command();
+const CONFIG_FILE = 'lai_config.json';
+
+function read_config() {
+  try {
+    const fileContents = fs.readFileSync(`${get_base_dir()}/${CONFIG_FILE}`).toString();
+    return JSON.parse(fileContents);
+  } catch (e) {
+    console.log('error reading config file ...', e);
+    return {};
+  }
+}
 
 function get_system_prompt(sprompt) {
   if (!sprompt) {
@@ -42,17 +53,26 @@ export const cmd_parse = args => {
   if (!model) {
     model = get_default_model(provider);
   }
+  const conf = read_config();
   const system_prompt = get_system_prompt(options?.systemPrompt);
   if (system_prompt) {
     add_message({ role: 'system', content: system_prompt });
   }
+  //   const parsed_options = {
+  //     model,
+  //     provider,
+  //     debug: !!options.debug,
+  //     system_prompt,
+  //     stream: !!options.stream,
+  //     show_model_name: !!options.showModelName,
+  //   };
   const parsed_options = {
-    model,
-    provider,
-    debug: !!options.debug,
+    model: options.model || conf.model || get_default_model(get_default_provider()),
+    provider: options.provider || conf.provider || get_default_provider(),
+    debug: !!options.debug || !!conf.debug,
     system_prompt,
-    stream: !!options.stream,
-    show_model_name: !!options.showModelName,
+    stream: !!options.stream || !!conf.stream,
+    show_model_name: !!options.showModelName || !!conf.show_model_name,
   };
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);

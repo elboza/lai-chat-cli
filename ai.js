@@ -1,6 +1,6 @@
 import { repl } from '#root/repl.js';
 import { cmd_parse } from '#root/cmd_parse.js';
-import { init as google_init } from '#root/api/google.js';
+import { init as google_init } from '#root/lib/google.js';
 
 async function init(options) {
   if (options?.provider === 'google') {
