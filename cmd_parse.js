@@ -7,9 +7,18 @@ const program = new Command();
 const CONFIG_FILE = 'lai_config.json';
 
 function read_config() {
+  let fileContents;
   try {
-    const fileContents = fs.readFileSync(`${get_base_dir()}/${CONFIG_FILE}`).toString();
-    return JSON.parse(fileContents);
+    fileContents = fs.readFileSync(`${get_base_dir()}/${CONFIG_FILE}`).toString();
+  } catch (e) {
+    // console.log('error opening config file ...', e);
+    return {};
+  }
+  try {
+    if (fileContents) {
+      return JSON.parse(fileContents);
+    }
+    return {};
   } catch (e) {
     console.log('error reading config file ...', e);
     return {};
