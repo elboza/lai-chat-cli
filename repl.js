@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import { aichat, aigen } from '#root/lib/ollama.js';
 import { ai_chat, get_models } from '#root/lib/copilot.js';
-import { aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
+import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
 import { add_message, reset_messages } from '#root/history.js';
 
 function read_file(filename) {
@@ -125,6 +125,10 @@ export const repl = async options => {
         await ai_chat(answer, options);
         break;
       case 'google':
+        if (answer === '/models') {
+          await google_get_models(options);
+          continue;
+        }
         // await google_aigen(answer, options);
         await google_aichat(answer, options);
         break;
