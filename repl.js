@@ -6,6 +6,72 @@ import { ai_chat, get_models } from '#root/lib/copilot.js';
 import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/history.js';
 
+const instr = {
+  CMD_HELP: {
+    name: '/help',
+    desc: 'this help',
+  },
+  CMD_QUIT: {
+    name: '/quit',
+    desc: 'exit the repl',
+  },
+  CMD_BYE: {
+    name: '/bye',
+    desc: 'exit the repl',
+  },
+  CMD_DEBUG: {
+    name: '/debug',
+    desc: 'toggle debug info',
+  },
+  CMD_INFO: {
+    name: '/info',
+    desc: 'show current settings',
+  },
+  CMD_NEWCHAT: {
+    name: '/newchat',
+    desc: 'start a new chat',
+  },
+  CMD_STREAM: {
+    name: '/stream',
+    desc: 'toggle stream chat',
+  },
+  CMD_CMD: {
+    name: '/cmd',
+    desc: 'execute a shell command (showing its original output) and submit its output to the model',
+  },
+  CMD_NCMD: {
+    name: '/ncmd',
+    desc: 'execute a shell command (not showing its original output) and submit its output to the model',
+  },
+  CMD_SYSTEM: {
+    name: '/system',
+    desc: 'add a chat system info',
+  },
+  CMD_FILESUBMIT: {
+    name: '/filesubmit',
+    desc: 'read a file content and sent it to the model as an input',
+  },
+  CMD_FILE: {
+    name: '/file',
+    desc: 'read a file and add it it the chat system info',
+  },
+  CMD_NEWMODEL: {
+    name: '/newmodel',
+    desc: 'set a new model. the format is provider:model',
+  },
+  CMD_MODELS: {
+    name: '/models',
+    desc: 'show available models',
+  },
+  CMD_SHOWMODELNAME: {
+    name: '/showmodelname',
+    desc: 'toggle show model name in response',
+  },
+  CMD_REFRESH: {
+    name: '/refresh',
+    desc: 'print again all chat logs to console',
+  },
+};
 function read_file(filename) {
   try {
     const fileContents = fs.readFileSync(filename).toString();
@@ -31,77 +97,63 @@ export const repl = async options => {
     if (!answer) {
       continue;
     }
-    if (answer === '/debug') {
+    if (answer === instr.CMD_DEBUG.name) {
       debug = !debug;
       options.debug = debug;
       continue;
     }
-    if (answer === '/info') {
+    if (answer === instr.CMD_INFO.name) {
       console.log(options);
       continue;
     }
-    if (answer === '/newchat') {
+    if (answer === instr.CMD_NEWCHAT.name) {
       reset_messages();
       continue;
     }
-    if (answer === '/quit' || answer === '/bye') {
+    if (answer === instr.CMD_QUIT.name || answer === instr.CMD_BYE.name) {
       break;
     }
-    if (answer === '/stream') {
+    if (answer === instr.CMD_STREAM.name) {
       options.stream = !options.stream;
       continue;
     }
-    if (answer === '/showmodelname') {
+    if (answer === instr.CMD_SHOWMODELNAME.name) {
       options.show_model_name = !options.show_model_name;
       continue;
     }
-    if (answer === '/refresh') {
+    if (answer === instr.CMD_REFRESH.name) {
       refresh_chat(options);
       continue;
     }
-    if (answer === '/help') {
+    if (answer === instr.CMD_HELP.name) {
       console.log('available commands:');
-      console.log('/quit or /bye : exit the repl');
-      console.log('/debug : toggle debug info');
-      console.log('/info : show current settings');
-      console.log('/newchat : start a new chat');
-      console.log('/stream : toggle stream chat');
-      console.log('/help : this help');
-      console.log('/cmd : execute a shell command (showing its original output) and submit its output to the model');
-      console.log(
-        '/ncmd : execute a shell command (not showing its original output) and submit its output to the model',
-      );
-      console.log('/system : add a chat system info');
-      console.log('/filesubmit : read a file content and sent it to the model as an input');
-      console.log('/file : read a file and add it it the chat system info');
-      console.log('/newmodel : set a new model. the format is provider:model');
-      console.log('/models : show available models');
-      console.log('/showmodelname : toggle show model name in response');
-      console.log('/refresh : print again all chat logs to console');
+      for (const item of Object.keys(instr)) {
+        console.log(`${instr[item].name} : ${instr[item].desc}`);
+      }
       continue;
     }
     const [command, ...args] = answer.split(' ');
-    if (command === '/cmd') {
+    if (command === instr.CMD_CMD.name) {
       console.log('exec ...', args.join(' '));
       answer = (await execSync(args.join(' '))).toString();
       console.log(answer);
     }
-    if (command === '/ncmd') {
+    if (command === instr.CMD_NCMD.name) {
       console.log('exec ...', args.join(' '));
       answer = (await execSync(args.join(' '))).toString();
     }
-    if (command === '/system') {
+    if (command === instr.CMD_SYSTEM.name) {
       add_message({ role: 'system', content: args.join(' ') });
       continue;
     }
-    if (command === '/filesubmit') {
+    if (command === instr.CMD_FILESUBMIT.name) {
       const data = read_file(args.join(' '));
       if (!data) {
         console.log('err reading file ...');
       }
       answer = data;
     }
-    if (command === '/file') {
+    if (command === instr.CMD_FILE.name) {
       const data = read_file(args.join(' '));
       if (!data) {
         console.log('err reading file ...');
@@ -109,7 +161,7 @@ export const repl = async options => {
       add_message({ role: 'system', content: data });
       continue;
     }
-    if (command === '/newmodel') {
+    if (command === instr.CMD_NEWMODEL.name) {
       const [provider, model] = args.join(' ').split(':');
       console.log('model ...', provider, model);
       if (!provider || !model) {
@@ -123,14 +175,14 @@ export const repl = async options => {
     // await aichat(answer, options);
     switch (options.provider) {
       case 'copilot':
-        if (answer === '/models') {
+        if (answer === instr.CMD_MODELS.name) {
           await get_models(options);
           continue;
         }
         await ai_chat(answer, options);
         break;
       case 'google':
-        if (answer === '/models') {
+        if (answer === instr.CMD_MODELS.name) {
           await google_get_models(options);
           continue;
         }
