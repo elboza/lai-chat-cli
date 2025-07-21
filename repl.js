@@ -4,7 +4,7 @@ import fs from 'fs';
 import { aichat, aigen } from '#root/lib/ollama.js';
 import { ai_chat, get_models } from '#root/lib/copilot.js';
 import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
-import { add_message, reset_messages } from '#root/history.js';
+import { refresh_chat, add_message, reset_messages } from '#root/history.js';
 
 function read_file(filename) {
   try {
@@ -55,6 +55,10 @@ export const repl = async options => {
       options.show_model_name = !options.show_model_name;
       continue;
     }
+    if (answer === '/refresh') {
+      refresh_chat(options);
+      continue;
+    }
     if (answer === '/help') {
       console.log('available commands:');
       console.log('/quit or /bye : exit the repl');
@@ -73,6 +77,7 @@ export const repl = async options => {
       console.log('/newmodel : set a new model. the format is provider:model');
       console.log('/models : show available models');
       console.log('/showmodelname : toggle show model name in response');
+      console.log('/refresh : print again all chat logs to console');
       continue;
     }
     const [command, ...args] = answer.split(' ');
