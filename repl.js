@@ -98,7 +98,7 @@ export const repl = async options => {
       continue;
     }
     const commands_list = Object.values(instr).map(x => x.name);
-    if (!commands_list.some(x => answer.startsWith(x))) {
+    if (answer.startsWith('/') && !commands_list.some(x => answer.startsWith(x))) {
       console.log('invalid or incorrect command.');
       continue;
     }
