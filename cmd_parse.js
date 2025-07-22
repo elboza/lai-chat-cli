@@ -55,7 +55,6 @@ export const cmd_parse = args => {
   const options = program.opts();
   let provider = options?.provider;
   let model = options?.model;
-  // let [provider,model]=options?.model?.split(':') || [null, null];
   if (!provider) {
     provider = get_default_provider();
   }
@@ -67,14 +66,6 @@ export const cmd_parse = args => {
   if (system_prompt) {
     add_message({ role: 'system', content: system_prompt });
   }
-  //   const parsed_options = {
-  //     model,
-  //     provider,
-  //     debug: !!options.debug,
-  //     system_prompt,
-  //     stream: !!options.stream,
-  //     show_model_name: !!options.showModelName,
-  //   };
   const parsed_options = {
     model: options.model || conf.model || get_default_model(get_default_provider()),
     provider: options.provider || conf.provider || get_default_provider(),
