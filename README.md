@@ -1,6 +1,6 @@
 # LAI - Local AI cli
 
-a simple AI swiss knife tool
+a simple AI swiss knife cli tool
 
 ### install
 
@@ -20,7 +20,7 @@ npm i -g
 
 ### setup
 
-create `lai_config.json` from the `lai_config.template` and modify it to you preferred startup setup.
+create `lai_config.json` from the `lai_config.template` and modify it to your preferred startup setup.
 
 ### providers setup
 
@@ -40,7 +40,7 @@ get google ai api key from google ai portal, and place it into `tokens/google_to
 
 ```
 lai --help
-Usage: ai [options]
+Usage: lai [options]
 
 Options:
   -d, --debug
