@@ -26,7 +26,7 @@ create `lai_config.json` from the `lai_config.template` and modify it to your pr
 
 #### copilot
 
-run `copilot_auth.sh` located into the `scripts` directory, and copy the ACCESS_TOKEN into the ACCESS_TOKEN field in the `tokens/copilot_tokens.json` creates from the `tokens/copilot_tokens.json.template` file.
+run `copilot_auth.sh` located into the `scripts` directory, and copy the ACCESS_TOKEN into the ACCESS_TOKEN field in the `tokens/copilot_tokens.json` creates from the `tokens/copilot_tokens.json.template` file. (if you see 'null' value in Copilot token then you will need to enable copilot into your github account page.)
 
 #### ollama
 
