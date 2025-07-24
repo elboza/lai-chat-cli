@@ -1,6 +1,7 @@
 import { repl } from '#root/repl.js';
 import { cmd_parse } from '#root/cmd_parse.js';
 import { init as google_init } from '#root/lib/google.js';
+import {load_mcp} from '#root/mcp.js';
 
 async function init(options) {
   if (options?.provider === 'google') {
@@ -11,5 +12,6 @@ async function init(options) {
 (async function main() {
   const options = cmd_parse(process.argv);
   await init(options);
+	load_mcp(options);
   await repl(options);
 })();

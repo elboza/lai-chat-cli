@@ -19,6 +19,7 @@
     "@google/genai": "^1.10.0",
     "commander": "^14.0.0",
     "got": "^14.4.7",
+    "json5": "^2.2.3",
     "ollama": "^0.5.16"
   },
   "devDependencies": {

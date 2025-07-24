@@ -5,6 +5,7 @@ import { aichat, aigen } from '#root/lib/ollama.js';
 import { ai_chat, get_models } from '#root/lib/copilot.js';
 import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/history.js';
+import { mcpt_call, get_tools } from '#root/mcp.js';
 
 const instr = {
   CMD_HELP: {
@@ -71,6 +72,14 @@ const instr = {
     name: '/refresh',
     desc: 'print again all chat logs to console',
   },
+  CMD_MCPTOOLS: {
+    name: '/mcptools',
+    desc: 'list loaded mcp tools',
+  },
+  CMD_MCPT_CALL: {
+    name: '/mcpt_call',
+    desc: 'direct call to a tool (/mcpt_call tool_name {...params})',
+  },
 };
 function read_file(filename) {
   try {
@@ -130,6 +139,15 @@ export const repl = async options => {
       refresh_chat(options);
       continue;
     }
+    if (answer === instr.CMD_MCPTOOLS.name) {
+      // console.log(get_tools());
+      get_tools().forEach(t => {
+        console.log(`${t.function.name} : ${t.function.description}`);
+        console.log(`  - props: ${JSON.stringify(t.function.parameters.properties)}`);
+        console.log(`  - required: ${JSON.stringify(t.function.parameters.required)}`);
+      });
+      continue;
+    }
     if (answer === instr.CMD_HELP.name) {
       console.log('available commands:');
       for (const item of Object.keys(instr)) {
@@ -140,12 +158,12 @@ export const repl = async options => {
     const [command, ...args] = answer.split(' ');
     if (command === instr.CMD_CMD.name) {
       console.log('exec ...', args.join(' '));
-      answer = (await execSync(args.join(' '))).toString();
+      answer = execSync(args.join(' ')).toString();
       console.log(answer);
     }
     if (command === instr.CMD_NCMD.name) {
       console.log('exec ...', args.join(' '));
-      answer = (await execSync(args.join(' '))).toString();
+      answer = execSync(args.join(' ')).toString();
     }
     if (command === instr.CMD_SYSTEM.name) {
       add_message({ role: 'system', content: args.join(' ') });
@@ -175,6 +193,12 @@ export const repl = async options => {
       }
       options.model = model;
       options.provider = provider;
+      continue;
+    }
+    if (command === instr.CMD_MCPT_CALL.name) {
+      const name = args.shift();
+      const params = args.join(' ');
+      mcpt_call(name, params, options);
       continue;
     }
     // await aichat(answer, options);

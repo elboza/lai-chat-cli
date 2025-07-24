@@ -1,29 +1,10 @@
 import { Command } from 'commander';
 import fs from 'fs';
-import { get_base_dir, get_default_provider, get_default_model } from '#root/defaults.js';
+import {  get_default_provider, get_default_model } from '#root/defaults.js';
+import {read_config} from '#root/utils.js';
 import { add_message } from '#root/history.js';
 
 const program = new Command();
-const CONFIG_FILE = 'lai_config.json';
-
-function read_config() {
-  let fileContents;
-  try {
-    fileContents = fs.readFileSync(`${get_base_dir()}/${CONFIG_FILE}`).toString();
-  } catch (e) {
-    // console.log('error opening config file ...', e);
-    return {};
-  }
-  try {
-    if (fileContents) {
-      return JSON.parse(fileContents);
-    }
-    return {};
-  } catch (e) {
-    console.log('error reading config file ...', e);
-    return {};
-  }
-}
 
 function get_system_prompt(sprompt) {
   if (!sprompt) {

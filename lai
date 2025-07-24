@@ -2,5 +2,5 @@
 
 set -e
 BASH_DIR="$(dirname "$(realpath "$0")")"
-node "${BASH_DIR}/ai.js" "$@"
+node "${BASH_DIR}/lai.js" "$@"
 
