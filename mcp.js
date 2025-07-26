@@ -62,10 +62,10 @@ function get_tools_list(server, options) {
 
 export const mcpt_call = (name, args, options) => {
   const [mcp_server, tool_name] = name.split('__');
-	if(!mcp_server || !tool_name) {
-		console.log('err ... server or tool name is missing');
-		return;
-	}
+  if (!mcp_server || !tool_name) {
+    console.log('err ... server or tool name is missing');
+    return;
+  }
   if (!args) {
     args = '{}';
   }

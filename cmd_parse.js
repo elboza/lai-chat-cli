@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import fs from 'fs';
-import {  get_default_provider, get_default_model } from '#root/defaults.js';
-import {read_config} from '#root/utils.js';
+import { get_default_provider, get_default_model } from '#root/defaults.js';
+import { read_config } from '#root/utils.js';
 import { add_message } from '#root/history.js';
 
 const program = new Command();
