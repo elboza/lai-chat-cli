@@ -1,10 +1,10 @@
 import { GoogleGenAI } from '@google/genai';
 import fs from 'fs';
-import { get_base_dir } from '#root/defaults.js';
-import { get_messages, add_message } from '#root/history.js';
-import { get_tools } from '#root/mcp.js';
+import { get_base_dir } from '#root/src/defaults.js';
+import { get_messages, add_message } from '#root/src/history.js';
+import { get_tools } from '#root/src/mcp.js';
 
-const TOKENS_FILE = 'tokens/google_tokens.json';
+const TOKENS_FILE = 'src/tokens/google_tokens.json';
 let GEMINI_API_KEY = '';
 
 let ai;
@@ -84,6 +84,7 @@ export const aichat = async (prompt, options) => {
       },
     };
     if (options?.debug) {
+  process.stdout.write('                    \r');
       console.log(req);
     }
     chat_g = ai.chats.create(req);
@@ -92,6 +93,7 @@ export const aichat = async (prompt, options) => {
   const response = await chat_g.sendMessage({
     message: prompt,
   });
+  process.stdout.write('                    \r');
   if (options?.show_model_name) {
     console.log(`[ ${response.modelVersion} ]:`);
   }

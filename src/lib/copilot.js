@@ -1,10 +1,10 @@
 import got from 'got';
 import fs from 'fs';
-import { get_messages, add_message } from '#root/history.js';
-import { get_base_dir } from '#root/defaults.js';
-import { get_tools } from '#root/mcp.js';
+import { get_messages, add_message } from '#root/src/history.js';
+import { get_base_dir } from '#root/src/defaults.js';
+import { get_tools } from '#root/src/mcp.js';
 
-const TOKENS_FILE = 'tokens/copilot_tokens.json';
+const TOKENS_FILE = 'src/tokens/copilot_tokens.json';
 
 export const read_tokens = () => {
   try {
@@ -61,6 +61,7 @@ const get_chat_token = async (new_token = false) => {
 const make_request = async (req, options) => {
   process.stdout.write('  Thinking ...\r');
   if (options?.debug) {
+  process.stdout.write('                   \r');
     console.log('req ...', req);
   }
   let retry = 2;
@@ -71,6 +72,7 @@ const make_request = async (req, options) => {
       if (options?.return_response) {
         return resp;
       }
+  process.stdout.write('                   \r');
       if (options?.show_model_name) {
         console.log(`[ ${resp.model} ]:`);
       }

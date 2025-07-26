@@ -1,6 +1,6 @@
 import ollama from 'ollama';
-import { get_messages, add_message } from '#root/history.js';
-import { get_tools } from '#root/mcp.js';
+import { get_messages, add_message } from '#root/src/history.js';
+import { get_tools } from '#root/src/mcp.js';
 
 export const aichat = async (prompt, options) => {
   add_message({ role: 'user', content: prompt });

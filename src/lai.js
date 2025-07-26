@@ -1,7 +1,7 @@
-import { repl } from '#root/repl.js';
-import { cmd_parse } from '#root/cmd_parse.js';
-import { init as google_init } from '#root/lib/google.js';
-import { load_mcp } from '#root/mcp.js';
+import { repl } from '#root/src/repl.js';
+import { cmd_parse } from '#root/src/cmd_parse.js';
+import { init as google_init } from '#root/src/lib/google.js';
+import { load_mcp } from '#root/src/mcp.js';
 
 async function init(options) {
   if (options?.provider === 'google') {

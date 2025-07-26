@@ -1,4 +1,4 @@
-tokens/*.json
+src/tokens/*.json
 node_modules
 lai_config.json
 

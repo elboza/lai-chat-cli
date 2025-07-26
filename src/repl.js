@@ -1,11 +1,11 @@
 import readline from 'node:readline/promises';
 import { execSync } from 'child_process';
 import fs from 'fs';
-import { aichat, aigen } from '#root/lib/ollama.js';
-import { ai_chat, get_models } from '#root/lib/copilot.js';
-import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/lib/google.js';
-import { refresh_chat, add_message, reset_messages } from '#root/history.js';
-import { mcpt_call, get_tools } from '#root/mcp.js';
+import { aichat, aigen } from '#root/src/lib/ollama.js';
+import { ai_chat, get_models } from '#root/src/lib/copilot.js';
+import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/src/lib/google.js';
+import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
+import { mcpt_call, get_tools } from '#root/src/mcp.js';
 
 const instr = {
   CMD_HELP: {

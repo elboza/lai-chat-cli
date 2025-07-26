@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { get_base_dir } from '#root/defaults.js';
+import { get_base_dir } from '#root/src/defaults.js';
 
 const CONFIG_FILE = 'lai_config.json';
 

@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import JSON5 from 'json5';
-import { read_config } from '#root/utils.js';
+import { read_config } from '#root/src/utils.js';
 
 const SYN = { jsonrpc: '2.0', id: 1, method: 'initialize' };
 const SYN_ACK = { jsonrpc: '2.0', id: 2, method: 'notifications/initialized' };
@@ -23,10 +23,15 @@ function get_message(msg) {
   msg.id = Date.now();
   return JSON.stringify(msg);
 }
+function get_server (name) {
+	const server= servers.find(s=>s.server===name);
+	return server?.data || null;
+}
+
 const send_stdio_data = (cli_cmd, input_str, options) => {
   try {
     // const resp=(execSync(cli_cmd, { input: input_str })).toString();
-    const resp = execSync(`/home/drugo/my_closet/ai/my-mcp-server-bash/mcp_add.sh <<< '${input_str}'`).toString();
+    const resp = execSync(`${cli_cmd} <<< '${input_str}'`).toString();
     if (options?.debug) {
       console.log(resp);
     }
@@ -82,7 +87,7 @@ export const mcpt_call = (name, args, options) => {
   if (options?.debug) {
     console.log('call ...', get_message(TOOLS_CALL));
   }
-  const resp = send_stdio_data(mcp_server.command, get_message(TOOLS_CALL), options);
+  const resp = send_stdio_data(get_server(mcp_server)?.command, get_message(TOOLS_CALL), options);
   if (options?.debug) {
     console.log('resp ...', JSON.stringify(resp));
   }
@@ -98,7 +103,7 @@ export const load_mcp = options => {
   const mcp_servers = read_config()?.mcpServers;
   // console.log('mcp ...', mcp_servers);
   for (const server of Object.keys(mcp_servers)) {
-    servers.push(server);
+    servers.push({server, data:mcp_servers[server]});
     if (mcp_servers[server].type === 'stdio') {
       if (init_server(mcp_servers[server], options)) {
         const resp = get_tools_list(mcp_servers[server], options);
