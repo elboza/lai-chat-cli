@@ -3,7 +3,11 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import { aichat, aigen } from '#root/src/lib/ollama.js';
 import { ai_chat, get_models } from '#root/src/lib/copilot.js';
-import { get_models as google_get_models, aichat as google_aichat, aigen as google_aigen } from '#root/src/lib/google.js';
+import {
+  get_models as google_get_models,
+  aichat as google_aichat,
+  aigen as google_aigen,
+} from '#root/src/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { mcpt_call, get_tools } from '#root/src/mcp.js';
 
@@ -80,6 +84,10 @@ const instr = {
     name: '/mcpt_call',
     desc: 'direct call to a tool (/mcpt_call tool_name {...params})',
   },
+  CMD_MCPT_SWITCH: {
+    name: '/mcpt_switch',
+    desc: 'toggle mcp tools enable/disable',
+  },
 };
 function read_file(filename) {
   try {
@@ -146,6 +154,10 @@ export const repl = async options => {
         console.log(`  - props: ${JSON.stringify(t.function.parameters.properties)}`);
         console.log(`  - required: ${JSON.stringify(t.function.parameters.required)}`);
       });
+      continue;
+    }
+    if (answer === instr.CMD_MCPT_SWITCH.name) {
+      options.enable_mcp_tools = !options.enable_mcp_tools;
       continue;
     }
     if (answer === instr.CMD_HELP.name) {

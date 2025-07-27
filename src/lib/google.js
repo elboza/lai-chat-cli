@@ -74,7 +74,7 @@ export const aichat = async (prompt, options) => {
       history: hist_to_google(get_messages()),
       config: {
         systemInstruction: get_system_instructions(),
-//         tools: [{ function_declarations: get_tools() }],
+        tools: options?.enable_mcp_tools ? [{ function_declarations: get_tools() }] : undefined,
 //         toolConfig: {
 //           functionCallingConfig: {
 //             mode: 'ANY',

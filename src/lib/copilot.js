@@ -61,7 +61,7 @@ const get_chat_token = async (new_token = false) => {
 const make_request = async (req, options) => {
   process.stdout.write('  Thinking ...\r');
   if (options?.debug) {
-  process.stdout.write('                   \r');
+    process.stdout.write('                   \r');
     console.log('req ...', req);
   }
   let retry = 2;
@@ -72,9 +72,14 @@ const make_request = async (req, options) => {
       if (options?.return_response) {
         return resp;
       }
-  process.stdout.write('                   \r');
+      process.stdout.write('                   \r');
       if (options?.show_model_name) {
         console.log(`[ ${resp.model} ]:`);
+      }
+      if (resp?.choices[0]?.tool_calls) {
+        // TODO: TEST !
+        console.log(options?.debug === true ? JSON.stringify(res) : JSON.stringify(resp?.choices[0].tool_calls));
+        return;
       }
       console.log(options?.debug || options?.raw_output ? resp : resp?.choices[0]?.message?.content);
       if (options.debug) {
@@ -138,7 +143,7 @@ export const ai_chat = async (prompt, options) => {
       n: 1,
       stream: false,
       messages: get_messages(),
-      // tools: get_tools(),
+      tools: options?.enable_mcp_tools ? get_tools() : undefined,
     }),
   };
   await make_request(req, options);

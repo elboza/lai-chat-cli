@@ -29,6 +29,7 @@ export const cmd_parse = args => {
     .option('-m, --model <string>')
     .option('-f, --system-prompt <string>')
     .option('-n, --show-model-name')
+    .option('-t, --mcp-tools')
     .option('-s, --stream');
 
   program.parse(args);
@@ -54,6 +55,7 @@ export const cmd_parse = args => {
     system_prompt,
     stream: !!options.stream || !!conf.stream,
     show_model_name: !!options.showModelName || !!conf.show_model_name,
+    enable_mcp_tools: !!options.mcpTools,
   };
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);

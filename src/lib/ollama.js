@@ -10,7 +10,7 @@ export const aichat = async (prompt, options) => {
     messages: get_messages(),
     stream: !!options?.stream,
     // format: "json",
-    //	tools: get_tools(),
+    tools: options?.enable_mcp_tools ? get_tools() : undefined,
   };
   if (options?.debug) {
     console.log('req ...', req);
@@ -35,6 +35,10 @@ export const aichat = async (prompt, options) => {
   }
 
   if (!options?.stream) {
+    if (response?.message.tool_calls) {
+      console.log(options?.debug === true ? JSON.stringify(response) : JSON.stringify(response?.message.tool_calls));
+      return;
+    }
     console.log(options?.debug === true ? response : response?.message?.content);
   }
   console.log('');
