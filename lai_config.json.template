@@ -2,4 +2,5 @@
 	"show_model_name": true,
 	"provider": "ollama",
 	"model": "llama3.2"
+   	"mcpServers": {},
 }
