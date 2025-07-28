@@ -1,6 +1,6 @@
 import ollama from 'ollama';
 import { get_messages, add_message } from '#root/src/history.js';
-import { get_tools } from '#root/src/mcp.js';
+import { mcpt_call, get_tools } from '#root/src/mcp.js';
 
 export const aichat = async (prompt, options) => {
   add_message({ role: 'user', content: prompt });
@@ -30,13 +30,21 @@ export const aichat = async (prompt, options) => {
     }
     response.message = streamed;
   }
-  if (response?.message) {
+  if (response?.message?.content) {
     add_message(response.message);
   }
 
   if (!options?.stream) {
     if (response?.message.tool_calls) {
       console.log(options?.debug === true ? JSON.stringify(response) : JSON.stringify(response?.message.tool_calls));
+      add_message({
+        role: response?.message.role,
+        content: JSON.stringify(response?.message.tool_calls),
+      });
+      if (options?.enable_mcpt_exec) {
+        const tc = response?.message.tool_calls[0];
+        mcpt_call(tc.function.name, JSON.stringify(tc.function.arguments), options);
+      }
       return;
     }
     console.log(options?.debug === true ? response : response?.message?.content);
