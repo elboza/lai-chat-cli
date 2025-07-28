@@ -88,6 +88,10 @@ const instr = {
     name: '/mcpt_switch',
     desc: 'toggle mcp tools enable/disable',
   },
+  CMD_MCPT_EXEC_SWITCH: {
+    name: '/mcpt_exec_switch',
+    desc: 'toggle mcp tools function execution',
+  },
 };
 function read_file(filename) {
   try {
@@ -158,6 +162,10 @@ export const repl = async options => {
     }
     if (answer === instr.CMD_MCPT_SWITCH.name) {
       options.enable_mcp_tools = !options.enable_mcp_tools;
+      continue;
+    }
+    if (answer === instr.CMD_MCPT_EXEC_SWITCH.name) {
+      options.enable_mcpt_exec = !options.enable_mcpt_exec;
       continue;
     }
     if (answer === instr.CMD_HELP.name) {

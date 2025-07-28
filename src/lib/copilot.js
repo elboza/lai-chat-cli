@@ -2,7 +2,7 @@ import got from 'got';
 import fs from 'fs';
 import { get_messages, add_message } from '#root/src/history.js';
 import { get_base_dir } from '#root/src/defaults.js';
-import { get_tools } from '#root/src/mcp.js';
+import { mcpt_call, get_tools } from '#root/src/mcp.js';
 
 const TOKENS_FILE = 'src/tokens/copilot_tokens.json';
 
@@ -83,6 +83,10 @@ const make_request = async (req, options) => {
         console.log(
           options?.debug === true ? JSON.stringify(resp) : JSON.stringify(resp?.choices[0].message.tool_calls),
         );
+        if (options?.enable_mcpt_exec) {
+          const tc = resp?.choices[0].message.tool_calls[0];
+          mcpt_call(tc.function.name, tc.function.arguments, options);
+        }
         return;
       }
       console.log(options?.debug || options?.raw_output ? JSON.stringify(resp) : resp?.choices[0]?.message?.content);
