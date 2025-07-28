@@ -67,8 +67,7 @@ const make_request = async (req, options) => {
   let retry = 2;
   while (retry > 0) {
     try {
-      let resp;
-      resp = options?.debug ? await got(req).text() : await got(req).json();
+      const resp = await got(req).json();
       if (options?.return_response) {
         return resp;
       }
@@ -76,15 +75,17 @@ const make_request = async (req, options) => {
       if (options?.show_model_name) {
         console.log(`[ ${resp.model} ]:`);
       }
-      if (resp?.choices[0]?.tool_calls) {
-        // TODO: TEST !
-        console.log(options?.debug === true ? JSON.stringify(res) : JSON.stringify(resp?.choices[0].tool_calls));
+      if (resp?.choices && resp?.choices[0]?.message.tool_calls) {
+        add_message({
+          role: resp.choices[0].message.role,
+          content: JSON.stringify(resp.choices[0].message.tool_calls),
+        });
+        console.log(
+          options?.debug === true ? JSON.stringify(resp) : JSON.stringify(resp?.choices[0].message.tool_calls),
+        );
         return;
       }
-      console.log(options?.debug || options?.raw_output ? resp : resp?.choices[0]?.message?.content);
-      if (options.debug) {
-        resp = JSON.parse(resp);
-      }
+      console.log(options?.debug || options?.raw_output ? JSON.stringify(resp) : resp?.choices[0]?.message?.content);
       if (resp?.choices[0]?.message?.content) {
         add_message({
           role: resp.choices[0].message.role,
