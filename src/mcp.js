@@ -23,9 +23,9 @@ function get_message(msg) {
   msg.id = Date.now();
   return JSON.stringify(msg);
 }
-function get_server (name) {
-	const server= servers.find(s=>s.server===name);
-	return server?.data || null;
+function get_server(name) {
+  const server = servers.find(s => s.server === name);
+  return server?.data || null;
 }
 
 const send_stdio_data = (cli_cmd, input_str, options) => {
@@ -76,7 +76,9 @@ export const mcpt_call = (name, args, options) => {
   }
   if (args) {
     try {
-      args = JSON5.parse(args);
+      if (typeof args === 'string') {
+        args = JSON5.parse(args);
+      }
     } catch (e) {
       console.log('invalid args ... ', e);
       return null;
@@ -103,7 +105,7 @@ export const load_mcp = options => {
   const mcp_servers = read_config()?.mcpServers;
   // console.log('mcp ...', mcp_servers);
   for (const server of Object.keys(mcp_servers)) {
-    servers.push({server, data:mcp_servers[server]});
+    servers.push({ server, data: mcp_servers[server] });
     if (mcp_servers[server].type === 'stdio') {
       if (init_server(mcp_servers[server], options)) {
         const resp = get_tools_list(mcp_servers[server], options);
