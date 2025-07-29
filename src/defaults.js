@@ -19,5 +19,5 @@ export const get_base_dir = () => {
   const filename = fileURLToPath(import.meta.url);
   const curdir = dirname(filename);
 
-  return curdir.replace(/\/src$/,'');
+  return curdir.replace(/\/src$/, '');
 };

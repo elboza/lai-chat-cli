@@ -84,7 +84,7 @@ export const aichat = async (prompt, options) => {
       },
     };
     if (options?.debug) {
-  process.stdout.write('                    \r');
+      process.stdout.write('                    \r');
       console.log(req);
     }
     chat_g = ai.chats.create(req);
