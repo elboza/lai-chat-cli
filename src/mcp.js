@@ -103,6 +103,9 @@ export const mcpt_call = (name, args, options) => {
 // eslint-disable-next-line import/prefer-default-export
 export const load_mcp = options => {
   const mcp_servers = read_config()?.mcpServers;
+  if (!mcp_servers) {
+    return;
+  }
   // console.log('mcp ...', mcp_servers);
   for (const server of Object.keys(mcp_servers)) {
     servers.push({ server, data: mcp_servers[server] });
