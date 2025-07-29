@@ -1,8 +1,8 @@
 {
-	"show_model_name": true,
+    "show_model_name": true,
     "enable_mcp_tools": false,
     "enable_mcp_tools_exec": false,
-	"provider": "ollama",
-	"model": "llama3.2"
-   	"mcpServers": {},
+    "provider": "ollama",
+    "model": "llama3.2"
+    "mcpServers": {},
 }
