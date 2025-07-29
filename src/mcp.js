@@ -89,7 +89,11 @@ export const mcpt_call = (name, args, options) => {
   if (options?.debug) {
     console.log('call ...', get_message(TOOLS_CALL));
   }
-  const resp = send_stdio_data(get_server(mcp_server)?.command, get_message(TOOLS_CALL), options);
+  const resp = send_stdio_data(
+    `${get_server(mcp_server)?.command} ${get_server(mcp_server)?.args.join(' ')}`,
+    get_message(TOOLS_CALL),
+    options,
+  );
   if (options?.debug) {
     console.log('resp ...', JSON.stringify(resp));
   }
