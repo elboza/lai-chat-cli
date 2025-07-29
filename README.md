@@ -26,20 +26,20 @@ create `lai_config.json` from the `lai_config.template` and modify it to your pr
 
 #### copilot
 
-run `copilot_auth.sh` located into the `scripts` directory, and copy the ACCESS_TOKEN into the ACCESS_TOKEN field in the `tokens/copilot_tokens.json` creates from the `tokens/copilot_tokens.json.template` file. (if you see 'null' value in Copilot token then you will need to enable copilot into your github account page.)
+run `copilot_auth.sh` located into the `scripts` directory, and copy the ACCESS_TOKEN into the ACCESS_TOKEN field in the `src/tokens/copilot_tokens.json` creates from the `src/tokens/copilot_tokens.json.template` file. (if you see 'null' value in Copilot token then you will need to enable copilot into your github account page.)
 
 #### ollama
 
-download ollama and run it with `ollama serve`
+download ollama (and set it up) and run it with `ollama serve`
 
 #### google
 
-get google ai api key from google ai portal, and place it into `tokens/google_tokens.js` created from the `tokens/google_tokens.json.template` file
+get google ai api key from google ai portal, and place it into `src/tokens/google_tokens.js` created from the `src/tokens/google_tokens.json.template` file
 
 ### run
 
 ```
-lai --help
+$ lai --help
 Usage: lai [options]
 
 Options:
@@ -48,6 +48,8 @@ Options:
   -m, --model <string>
   -f, --system-prompt <string>
   -n, --show-model-name
+  -t, --mcp-tools
+  -k, --mcp-tools-exec
   -s, --stream
   -h, --help                    display help for command
 ```
@@ -57,7 +59,7 @@ just run `lai` to enter the cli mode:
 and type `/help` to see all available commands or just start typying to interact with your AI.
 
 ```
-lai
+$ lai
 >>> /help
 available commands:
 /help : this help
@@ -76,11 +78,18 @@ available commands:
 /models : show available models
 /showmodelname : toggle show model name in response
 /refresh : print again all chat logs to console
+/mcptools : list loaded mcp tools
+/mcpt_call : direct call to a tool (/mcpt_call tool_name {...params})
+/mcpt_switch : toggle mcp tools enable/disable
+/mcpt_exec_switch : toggle mcp tools function execution
 ```
 
 ### MCP
 
-coming soon ...... MCP is not YET integrated in lai .
+partially implemented.
+MCP tools are disabled by default, but you can enable it at any time via command line flags (-t and -k), config file (enable_mcp_tools and enable_mcp_tools_exec) or cli commands (/mcpt_switch and /cmpt_exec_switch).
+
+known issues: mcpt tools are not working with google provider (it ignores them).
 
 ### licence: L-Beerware
 
