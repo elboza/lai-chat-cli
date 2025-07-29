@@ -86,7 +86,7 @@ available commands:
 
 ### MCP
 
-partially implemented.
+partially implemented (only stdio transport layer for the moment).
 MCP tools are disabled by default, but you can enable it at any time via command line flags (`-t` and `-k`), config file (`enable_mcp_tools` and `enable_mcp_tools_exec`) or cli commands (`/mcpt_switch` and `/mcpt_exec_switch`).
 
 known issues: mcpt tools are not working with google provider (it ignores them).
