@@ -56,7 +56,7 @@ Options:
 
 just run `lai` to enter the cli mode:
 
-and type `/help` to see all available commands or just start typying to interact with your AI.
+and type `/help` to see all available commands or just start typing to interact with your AI.
 
 ```
 $ lai
@@ -87,7 +87,7 @@ available commands:
 ### MCP
 
 partially implemented.
-MCP tools are disabled by default, but you can enable it at any time via command line flags (-t and -k), config file (enable_mcp_tools and enable_mcp_tools_exec) or cli commands (/mcpt_switch and /cmpt_exec_switch).
+MCP tools are disabled by default, but you can enable it at any time via command line flags (`-t` and `-k`), config file (`enable_mcp_tools` and `enable_mcp_tools_exec`) or cli commands (`/mcpt_switch` and `/mcpt_exec_switch`).
 
 known issues: mcpt tools are not working with google provider (it ignores them).
 
