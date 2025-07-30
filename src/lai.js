@@ -12,6 +12,8 @@ async function init(options) {
 (async function main() {
   const options = cmd_parse(process.argv);
   await init(options);
-  load_mcp(options);
+  if (options?.enable_mcp_tools) {
+    await load_mcp(options);
+  }
   await repl(options);
 })();

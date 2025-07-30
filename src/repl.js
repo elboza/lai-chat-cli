@@ -9,7 +9,7 @@ import {
   aigen as google_aigen,
 } from '#root/src/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
-import { mcpt_call, get_tools } from '#root/src/mcp.js';
+import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
 
 const instr = {
   CMD_HELP: {
@@ -162,6 +162,11 @@ export const repl = async options => {
     }
     if (answer === instr.CMD_MCPT_SWITCH.name) {
       options.enable_mcp_tools = !options.enable_mcp_tools;
+      if (options.enable_mcp_tools) {
+        await load_mcp(options);
+      } else {
+        await free_mcp(options);
+      }
       continue;
     }
     if (answer === instr.CMD_MCPT_EXEC_SWITCH.name) {
@@ -218,7 +223,7 @@ export const repl = async options => {
     if (command === instr.CMD_MCPT_CALL.name) {
       const name = args.shift();
       const params = args.join(' ');
-      mcpt_call(name, params, options);
+      await mcpt_call(name, params, options);
       continue;
     }
     // await aichat(answer, options);
@@ -247,5 +252,8 @@ export const repl = async options => {
     }
   }
   console.log('bye.');
+  if (options?.enable_mcp_tools) {
+    await free_mcp(options);
+  }
   rl.close();
 };

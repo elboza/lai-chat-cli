@@ -43,7 +43,7 @@ export const aichat = async (prompt, options) => {
       });
       if (options?.enable_mcpt_exec) {
         const tc = response?.message.tool_calls[0];
-        mcpt_call(tc.function.name, JSON.stringify(tc.function.arguments), options);
+        await mcpt_call(tc.function.name, JSON.stringify(tc.function.arguments), options);
       }
       return;
     }

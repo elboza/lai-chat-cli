@@ -1,6 +1,6 @@
 {
   "name": "lai",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "ai.js",
   "bin": "lai",
   "type": "module",
@@ -17,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@google/genai": "^1.10.0",
+    "@modelcontextprotocol/sdk": "^1.17.0",
     "commander": "^14.0.0",
     "got": "^14.4.7",
     "json5": "^2.2.3",

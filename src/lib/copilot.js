@@ -85,7 +85,7 @@ const make_request = async (req, options) => {
         );
         if (options?.enable_mcpt_exec) {
           const tc = resp?.choices[0].message.tool_calls[0];
-          mcpt_call(tc.function.name, tc.function.arguments, options);
+          await mcpt_call(tc.function.name, tc.function.arguments, options);
         }
         return;
       }
