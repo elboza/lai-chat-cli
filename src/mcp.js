@@ -112,24 +112,31 @@ export const load_mcp = options => {
   }
   // console.log('mcp ...', mcp_servers);
   for (const server of Object.keys(mcp_servers)) {
-    servers.push({ server, data: mcp_servers[server] });
-    if (mcp_servers[server].type === 'stdio') {
-      if (init_server(mcp_servers[server], options)) {
-        const resp = get_tools_list(mcp_servers[server], options);
-        if (resp?.result?.tools) {
-          resp.result.tools.forEach(t => {
-            tools.push({
-              type: 'function',
-              function: {
-                name: `${server}__${t.name}`,
-                description: t.description,
-                parameters: {
-                  ...t.inputSchema,
+    try {
+      servers.push({ server, data: mcp_servers[server] });
+      if (mcp_servers[server].type === 'stdio') {
+        if (init_server(mcp_servers[server], options)) {
+          const resp = get_tools_list(mcp_servers[server], options);
+          if (resp?.result?.tools) {
+            resp.result.tools.forEach(t => {
+              tools.push({
+                type: 'function',
+                function: {
+                  name: `${server}__${t.name}`,
+                  description: t.description,
+                  parameters: {
+                    ...t.inputSchema,
+                  },
                 },
-              },
+              });
             });
-          });
+          }
         }
+      }
+    } catch (e) {
+      console.log('error loading mcp server: ', server);
+      if (options?.debug) {
+        console.log(e);
       }
     }
   }
