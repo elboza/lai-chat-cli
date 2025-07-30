@@ -70,7 +70,7 @@ export const load_mcp = async options => {
   if (!mcp_servers) {
     return;
   }
-  console.log('mcp ...', mcp_servers);
+  // console.log('mcp ...', mcp_servers);
   for (const server of Object.keys(mcp_servers)) {
     // servers.push({ server, data: mcp_servers[server] });
     let connection = null;
