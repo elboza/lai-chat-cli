@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import fs from 'fs';
 import { get_base_dir } from '#root/src/defaults.js';
 import { get_messages, add_message } from '#root/src/history.js';
-import { get_tools } from '#root/src/mcp.js';
+import { mcpt_call, get_tools } from '#root/src/mcp.js';
 
 const TOKENS_FILE = 'src/tokens/google_tokens.json';
 let GEMINI_API_KEY = '';
@@ -34,6 +34,9 @@ function google_to_hist(hist_item) {
     role: role_changes[hist_item.role.toLowerCase()] || hist_item.role,
     content: hist_item.content,
   };
+}
+function tools_to_google(tools) {
+  return [{ functionDeclarations: tools.map(t => t.function) }];
 }
 function get_system_instructions() {
   const messages = get_messages();
@@ -74,19 +77,12 @@ export const aichat = async (prompt, options) => {
       history: hist_to_google(get_messages()),
       config: {
         systemInstruction: get_system_instructions(),
-        // TODO: fix mcptools ......
-        tools: options?.enable_mcp_tools ? [{ function_declarations: get_tools() }] : undefined,
-//         toolConfig: {
-//           functionCallingConfig: {
-//             mode: 'ANY',
-//             allowedFunctionNames: ['iaza__greetings'],
-//           },
-//         },
+        tools: options?.enable_mcp_tools ? tools_to_google(get_tools()) : undefined,
       },
     };
     if (options?.debug) {
       process.stdout.write('                    \r');
-      console.log(req);
+      console.log(JSON.stringify(req));
     }
     chat_g = ai.chats.create(req);
   }
@@ -98,11 +94,25 @@ export const aichat = async (prompt, options) => {
   if (options?.show_model_name) {
     console.log(`[ ${response.modelVersion} ]:`);
   }
-  if (options?.debug) {
-    console.log(JSON.stringify(response));
-  } else {
-    console.log(response.text);
+  if (response?.candidates[0]?.content?.parts[0]?.functionCall) {
+    console.log(
+      options?.denug === true
+        ? JSON.stringify(response)
+        : JSON.stringify(response?.candidates[0]?.content?.parts[0]?.functionCall),
+    );
+    add_message(
+      google_to_hist({
+        role: response?.candidates[0]?.content?.role,
+        content: JSON.stringify(response?.candidates[0]?.content?.parts[0]?.functionCall),
+      }),
+    );
+    if (options?.enable_mcpt_exec) {
+      const tc = response?.candidates[0]?.content?.parts[0];
+      await mcpt_call(tc.functionCall.name, tc.functionCall.args, options);
+    }
+    return;
   }
+  console.log(options?.debug ? JSON.stringify(response) : response.text);
   add_message(
     google_to_hist({
       role: response?.candidates[0]?.content?.role,
