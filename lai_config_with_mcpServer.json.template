@@ -6,7 +6,6 @@
     "model": "llama3.2",
     "mcpServers": {
         "serverName": {
-            "type": "stdio",
             "command": "....path to....../mcp.sh",
             "args": []
         }
