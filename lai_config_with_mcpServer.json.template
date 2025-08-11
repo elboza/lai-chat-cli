@@ -4,6 +4,8 @@
     "enable_mcp_tools_exec": false,
     "provider": "ollama",
     "model": "llama3.2",
+    "rag_provider": "ollama",
+    "rag_model": "bge-m3",
     "mcpServers": {
         "serverName": {
             "command": "....path to....../mcp.sh",

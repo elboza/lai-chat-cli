@@ -1,6 +1,11 @@
 import { Command } from 'commander';
 import fs from 'fs';
-import { get_default_provider, get_default_model } from '#root/src/defaults.js';
+import {
+  get_default_rag_model,
+  get_default_rag_provider,
+  get_default_provider,
+  get_default_model,
+} from '#root/src/defaults.js';
 import { read_config } from '#root/src/utils.js';
 import { add_message } from '#root/src/history.js';
 
@@ -58,6 +63,8 @@ export const cmd_parse = args => {
     show_model_name: !!options.showModelName || !!conf.show_model_name,
     enable_mcp_tools: !!options.mcpTools || !!conf.enable_mcp_tools,
     enable_mcpt_exec: !!options.mcpToolsExec || !!conf.enable_mcp_tools_exec,
+    rag_model: options.model || conf.rag_model || get_default_rag_model(get_default_provider()),
+    rag_provider: options.provider || conf.rag_provider || get_default_rag_provider(),
   };
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);

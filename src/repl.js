@@ -1,15 +1,18 @@
 import readline from 'node:readline/promises';
 import { execSync } from 'child_process';
 import fs from 'fs';
-import { aichat, aigen } from '#root/src/lib/ollama.js';
+import { ai_embed as ollama_ai_embed, aichat, aigen } from '#root/src/lib/ollama.js';
 import { ai_chat, get_models } from '#root/src/lib/copilot.js';
 import {
   get_models as google_get_models,
   aichat as google_aichat,
   aigen as google_aigen,
+  ai_embeddings as google_ai_embeddings,
 } from '#root/src/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
+import { rag_add, rag_rm, rag_list, rag_free, rag_search, rag_db } from '#root/src/rag.js';
+import { cosineSimilarity } from '#root/src/utils.js';
 
 const instr = {
   CMD_HELP: {
@@ -91,6 +94,38 @@ const instr = {
   CMD_MCPT_EXEC_SWITCH: {
     name: '/mcpt_exec_switch',
     desc: 'toggle mcp tools function execution',
+  },
+  CMD_RAG_VEC: {
+    name: '/rag_vect',
+    desc: 'generate an embedding vector',
+  },
+  CMD_RAG_VEC_ADD: {
+    name: '/rag_vect_add',
+    desc: 'add rag vector to mem',
+  },
+  CMD_RAG_VEC_LIST: {
+    name: '/rag_vect_list',
+    desc: 'list mem vector list',
+  },
+  CMD_RAG_VEC_RM: {
+    name: '/rag_vect_rm',
+    desc: 'remove a vector from mem',
+  },
+  CMD_RAG_LOOKUP: {
+    name: '/rag_lookup',
+    desc: 'perform vector similarity lookup',
+  },
+  CMD_RAG_FREE: {
+    name: '/rag_free',
+    desc: 'empty the rag mem db',
+  },
+  CMD_RAG_SEARCH: {
+    name: '/rag_vect_search',
+    desc: 'serch for rag items by text',
+  },
+  CMD_RAG_NEWMODEL: {
+    name: '/newragmodel',
+    desc: 'set a new model for rag. the format is provider:model',
   },
 };
 function read_file(filename) {
@@ -220,6 +255,17 @@ export const repl = async options => {
       options.provider = provider;
       continue;
     }
+    if (command === instr.CMD_RAG_NEWMODEL.name) {
+      const [provider, model] = args.join(' ').split(':');
+      console.log('rag model ...', provider, model);
+      if (!provider || !model) {
+        console.log('invalid new model.');
+        continue;
+      }
+      options.rag_model = model;
+      options.rag_provider = provider;
+      continue;
+    }
     if (command === instr.CMD_MCPT_CALL.name) {
       const name = args.shift();
       const params = args.join(' ');
@@ -227,6 +273,84 @@ export const repl = async options => {
       continue;
     }
     // await aichat(answer, options);
+    switch (options.rag_provider) {
+      case 'copilot':
+        break;
+      case 'google':
+        if (command === instr.CMD_RAG_VEC.name) {
+          const resp = await google_ai_embeddings(args.join(' '), options);
+          console.log(resp);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_ADD.name) {
+          const resp = await google_ai_embeddings(args.join(' '), options);
+          rag_add(args.join(' '), resp[0]);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_LIST.name) {
+          rag_list();
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_RM.name) {
+          rag_rm(args.join(' '));
+          continue;
+        }
+        if (command === instr.CMD_RAG_LOOKUP.name) {
+          const resp = await google_ai_embeddings(args.join(' '), options);
+          rag_db.forEach(x => {
+            const similarity = cosineSimilarity(resp[0], x.values);
+            console.log(`cos sim ${x.text}: ${similarity.toFixed(4)}`);
+          });
+          continue;
+        }
+        if (command === instr.CMD_RAG_FREE.name) {
+          rag_free();
+          continue;
+        }
+        if (command === instr.CMD_RAG_SEARCH.name) {
+          rag_search(args.join(' '));
+          continue;
+        }
+        break;
+
+      case 'ollama':
+      default:
+        if (command === instr.CMD_RAG_VEC.name) {
+          const resp = await ollama_ai_embed(args.join(' '), options);
+          console.log(resp);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_ADD.name) {
+          const resp = await google_ai_embeddings(args.join(' '), options);
+          rag_add(args.join(' '), resp[0]);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_LIST.name) {
+          rag_list();
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_RM.name) {
+          rag_rm(args.join(' '));
+          continue;
+        }
+        if (command === instr.CMD_RAG_LOOKUP.name) {
+          const resp = await google_ai_embeddings(args.join(' '), options);
+          rag_db.forEach(x => {
+            const similarity = cosineSimilarity(resp[0], x.values);
+            console.log(`cos sim ${x.text}: ${similarity.toFixed(4)}`);
+          });
+          continue;
+        }
+        if (command === instr.CMD_RAG_FREE.name) {
+          rag_free();
+          continue;
+        }
+        if (command === instr.CMD_RAG_SEARCH.name) {
+          rag_search(args.join(' '));
+          continue;
+        }
+        break;
+    }
     switch (options.provider) {
       case 'copilot':
         if (answer === instr.CMD_MODELS.name) {

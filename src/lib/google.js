@@ -1,3 +1,4 @@
+// import * as cosineSimilarity from 'compute-cosine-similarity';
 import { GoogleGenAI } from '@google/genai';
 import fs from 'fs';
 import { get_base_dir } from '#root/src/defaults.js';
@@ -130,4 +131,14 @@ export const get_models = async options => {
       console.log(model.name);
     }
   }
+};
+
+export const ai_embeddings = async (texts, options) => {
+  const response = await ai.models.embedContent({
+    model: options.rag_model || 'gemini-embedding-001',
+    contents: typeof texts === 'string' ? [texts] : texts,
+    taskType: 'SEMANTIC_SIMILARITY',
+  });
+  const embeddings = response.embeddings.map(e => e.values);
+  return embeddings;
 };

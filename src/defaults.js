@@ -11,9 +11,18 @@ const default_models = Object.freeze({
   copilot: 'gpt-4o',
   google: 'gemini-2.5-flash',
 });
+const default_rag_models = Object.freeze({
+  ollama: 'bge-3m',
+  copilot: '...',
+  google: 'gemini-embedding-001',
+});
 export const get_default_provider = () => providers.COPILOT;
 
+export const get_default_rag_provider = () => providers.COPILOT;
+
 export const get_default_model = provider => default_models[provider] || 'null';
+
+export const get_default_rag_model = provider => default_rag_models[provider] || 'null';
 
 export const get_base_dir = () => {
   const filename = fileURLToPath(import.meta.url);

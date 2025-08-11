@@ -72,3 +72,11 @@ export const aigen = async (prompt, options) => {
   console.log(options?.debug ? response : response?.response);
   console.log('');
 };
+
+export const ai_embed = async (text, options) => {
+  const resp = await ollama.embed({
+    model: options.rag_model || 'bge-m3',
+    input: text,
+  });
+  return resp.embeddings;
+};
