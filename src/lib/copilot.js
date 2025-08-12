@@ -153,3 +153,39 @@ export const ai_chat = async (prompt, options) => {
   };
   await make_request(req, options);
 };
+
+export const ai_embed = async (text, options) => {
+  let chat_token = await get_chat_token();
+  const req = {
+    method: 'POST',
+    url: 'https://api.githubcopilot.com/embeddings',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${chat_token}`,
+      'Editor-Version': 'vscode/1.80.1',
+    },
+    body: JSON.stringify({
+      model: options?.rag_model || 'text-embedding-3-small',
+      input: typeof(text) === 'string' ? [text] : text,
+    }),
+  };
+
+  let retry = 2;
+  while (retry > 0) {
+    try {
+      const resp = await got(req).json();
+      // console.log(resp);
+      retry = 0;
+		return resp;
+    } catch (e) {
+      // console.error('err ...', e);
+      console.log('...               ');
+      retry--;
+      chat_token = await get_chat_token(true);
+      req.headers.Authorization = `Bearer ${chat_token}`;
+      if (retry === 0) {
+        process.exit(1);
+      }
+    }
+  }
+};

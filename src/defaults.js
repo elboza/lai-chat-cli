@@ -13,7 +13,7 @@ const default_models = Object.freeze({
 });
 const default_rag_models = Object.freeze({
   ollama: 'bge-3m',
-  copilot: '...',
+  copilot: 'text-embedding-3-small',
   google: 'gemini-embedding-001',
 });
 export const get_default_provider = () => providers.COPILOT;

@@ -2,7 +2,7 @@ import readline from 'node:readline/promises';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import { ai_embed as ollama_ai_embed, aichat, aigen } from '#root/src/lib/ollama.js';
-import { ai_chat, get_models } from '#root/src/lib/copilot.js';
+import { ai_embed as copilot_ai_embeddings, ai_chat, get_models } from '#root/src/lib/copilot.js';
 import {
   get_models as google_get_models,
   aichat as google_aichat,
@@ -275,6 +275,40 @@ export const repl = async options => {
     // await aichat(answer, options);
     switch (options.rag_provider) {
       case 'copilot':
+        if (command === instr.CMD_RAG_VEC.name) {
+          const resp = await copilot_ai_embeddings(args.join(' '), options);
+          console.log(resp?.data[0]?.embedding);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_ADD.name) {
+          const resp = await copilot_ai_embeddings(args.join(' '), options);
+          rag_add(args.join(' '), resp?.data[0]?.embedding);
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_LIST.name) {
+          rag_list();
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_RM.name) {
+          rag_rm(args.join(' '));
+          continue;
+        }
+        if (command === instr.CMD_RAG_LOOKUP.name) {
+          const resp = await copilot_ai_embeddings(args.join(' '), options);
+          rag_db.forEach(x => {
+            const similarity = cosineSimilarity(resp?.data[0]?.embedding, x.values);
+            console.log(`cos sim ${x.text}: ${similarity.toFixed(4)}`);
+          });
+          continue;
+        }
+        if (command === instr.CMD_RAG_FREE.name) {
+          rag_free();
+          continue;
+        }
+        if (command === instr.CMD_RAG_SEARCH.name) {
+          rag_search(args.join(' '));
+          continue;
+        }
         break;
       case 'google':
         if (command === instr.CMD_RAG_VEC.name) {
