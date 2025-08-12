@@ -36,7 +36,8 @@ export const cmd_parse = args => {
     .option('-n, --show-model-name')
     .option('-t, --mcp-tools')
     .option('-k, --mcp-tools-exec')
-    .option('-s, --stream');
+    .option('-s, --stream')
+    .option('-r, --rag-file <string>');
 
   program.parse(args);
 
@@ -65,6 +66,7 @@ export const cmd_parse = args => {
     enable_mcpt_exec: !!options.mcpToolsExec || !!conf.enable_mcp_tools_exec,
     rag_model: options.model || conf.rag_model || get_default_rag_model(get_default_provider()),
     rag_provider: options.provider || conf.rag_provider || get_default_rag_provider(),
+    rag_file: options.ragFile,
   };
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);

@@ -1,7 +1,7 @@
 import readline from 'node:readline/promises';
 import { execSync } from 'child_process';
 import fs from 'fs';
-import { ai_embed as ollama_ai_embed, aichat, aigen } from '#root/src/lib/ollama.js';
+import { ai_embed as ollama_ai_embeddings, aichat, aigen } from '#root/src/lib/ollama.js';
 import { ai_embed as copilot_ai_embeddings, ai_chat, get_models } from '#root/src/lib/copilot.js';
 import {
   get_models as google_get_models,
@@ -152,8 +152,20 @@ let debug = false;
 // eslint-disable-next-line import/prefer-default-export
 export const repl = async options => {
   debug = options?.debug;
+  let exec_cmd;
+  let answer;
+  if (options?.rag_file) {
+    exec_cmd = `/rag_import_file ${options.rag_file}`;
+    options.rag_file = undefined;
+  }
+  options.rag_file = undefined;
   while (true) {
-    let answer = (await rl.question('>>> '))?.trim();
+    if (exec_cmd) {
+      answer = exec_cmd;
+      exec_cmd = undefined;
+    } else {
+      answer = (await rl.question('>>> '))?.trim();
+    }
     if (!answer) {
       continue;
     }
@@ -363,8 +375,8 @@ export const repl = async options => {
           const rag_file_list = rag_import_file(args.join(' '));
           if (rag_file_list) {
             const resp = await google_ai_embeddings(rag_file_list, options);
-            for (let i = 0; i < resp.data.length; i++) {
-              rag_add(rag_file_list[i], resp?.data[i].embedding);
+            for (let i = 0; i < resp.length; i++) {
+              rag_add(rag_file_list[i], resp[i]);
             }
           }
           continue;
@@ -411,8 +423,8 @@ export const repl = async options => {
           const rag_file_list = rag_import_file(args.join(' '));
           if (rag_file_list) {
             const resp = await ollama_ai_embeddings(rag_file_list, options);
-            for (let i = 0; i < resp.data.length; i++) {
-              rag_add(rag_file_list[i], resp?.data[i].embedding);
+            for (let i = 0; i < resp.length; i++) {
+              rag_add(rag_file_list[i], resp[i]);
             }
           }
           continue;
