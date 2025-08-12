@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 export let rag_db = [];
 
 let id = 0;
@@ -28,4 +30,56 @@ export const rag_search = text => {
     .forEach(x => {
       console.log(`${x.id} : ${x.text} [ ${x.values.length} values ]`);
     });
+};
+const read_file_as_string = filename => {
+  let fileContents;
+  try {
+    fileContents = fs.readFileSync(filename).toString();
+    return fileContents;
+  } catch (e) {
+    console.log('error opening rag file ...', e);
+    return null;
+  }
+};
+
+const import_text_data = data =>
+  data
+    .split('\n')
+    .map(x => x.split('.'))
+    .flat()
+    .filter(x => !!x);
+
+const import_json_data = data => {
+  try {
+    if (data) {
+      const parsed_data = JSON.parse(data);
+      if (typeof parsed_data === 'string') {
+        return [parsed_date];
+      }
+      if (parsed_data instanceof Array) {
+        return parsed_data
+          .map(x => (typeof x === 'string' ? x : JSON.stringify(x)))
+          .flat()
+          .filter(x => !!x);
+      }
+      if (parsed_data) {
+        return JSON.stringify([parsed_data]);
+      }
+    }
+    return null;
+  } catch (e) {
+    // console.log('error reading config file ...', e);
+    return null;
+  }
+};
+export const rag_import_file = filename => {
+  const data = read_file_as_string(filename);
+  let rag_file_list;
+  if (data) {
+    rag_file_list = import_json_data(data);
+    if (!rag_file_list) {
+      rag_file_list = import_text_data(data);
+    }
+    return rag_file_list;
+  }
 };

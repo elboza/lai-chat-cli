@@ -11,7 +11,7 @@ import {
 } from '#root/src/lib/google.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
-import { rag_add, rag_rm, rag_list, rag_free, rag_search, rag_db } from '#root/src/rag.js';
+import { rag_import_file, rag_add, rag_rm, rag_list, rag_free, rag_search, rag_db } from '#root/src/rag.js';
 import { cosineSimilarity } from '#root/src/utils.js';
 
 const instr = {
@@ -126,6 +126,10 @@ const instr = {
   CMD_RAG_NEWMODEL: {
     name: '/newragmodel',
     desc: 'set a new model for rag. the format is provider:model',
+  },
+  CMD_RAG_IMPORT_FILE: {
+    name: '/rag_import_file',
+    desc: 'import file to rag',
   },
 };
 function read_file(filename) {
@@ -309,6 +313,16 @@ export const repl = async options => {
           rag_search(args.join(' '));
           continue;
         }
+        if (command === instr.CMD_RAG_IMPORT_FILE.name) {
+          const rag_file_list = rag_import_file(args.join(' '));
+          if (rag_file_list) {
+            const resp = await copilot_ai_embeddings(rag_file_list, options);
+            for (let i = 0; i < resp.data.length; i++) {
+              rag_add(rag_file_list[i], resp?.data[i].embedding);
+            }
+          }
+          continue;
+        }
         break;
       case 'google':
         if (command === instr.CMD_RAG_VEC.name) {
@@ -345,6 +359,16 @@ export const repl = async options => {
           rag_search(args.join(' '));
           continue;
         }
+        if (command === instr.CMD_RAG_IMPORT_FILE.name) {
+          const rag_file_list = rag_import_file(args.join(' '));
+          if (rag_file_list) {
+            const resp = await google_ai_embeddings(rag_file_list, options);
+            for (let i = 0; i < resp.data.length; i++) {
+              rag_add(rag_file_list[i], resp?.data[i].embedding);
+            }
+          }
+          continue;
+        }
         break;
 
       case 'ollama':
@@ -355,7 +379,7 @@ export const repl = async options => {
           continue;
         }
         if (command === instr.CMD_RAG_VEC_ADD.name) {
-          const resp = await google_ai_embeddings(args.join(' '), options);
+          const resp = await ollama_ai_embeddings(args.join(' '), options);
           rag_add(args.join(' '), resp[0]);
           continue;
         }
@@ -368,7 +392,7 @@ export const repl = async options => {
           continue;
         }
         if (command === instr.CMD_RAG_LOOKUP.name) {
-          const resp = await google_ai_embeddings(args.join(' '), options);
+          const resp = await ollama_ai_embeddings(args.join(' '), options);
           rag_db.forEach(x => {
             const similarity = cosineSimilarity(resp[0], x.values);
             console.log(`cos sim ${x.text}: ${similarity.toFixed(4)}`);
@@ -381,6 +405,16 @@ export const repl = async options => {
         }
         if (command === instr.CMD_RAG_SEARCH.name) {
           rag_search(args.join(' '));
+          continue;
+        }
+        if (command === instr.CMD_RAG_IMPORT_FILE.name) {
+          const rag_file_list = rag_import_file(args.join(' '));
+          if (rag_file_list) {
+            const resp = await ollama_ai_embeddings(rag_file_list, options);
+            for (let i = 0; i < resp.data.length; i++) {
+              rag_add(rag_file_list[i], resp?.data[i].embedding);
+            }
+          }
           continue;
         }
         break;
