@@ -12,6 +12,7 @@ import {
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
 import {
+	rag_ctx_addclosest,
   rag_ctx_free,
   rag_ctx_add,
   rag_ctx_list,
@@ -329,6 +330,7 @@ export const repl = async options => {
             rag_ctx_add({ id: x.id, text: x.text, sim_val: similarity });
           });
           console.log('xx2 ... rag ctx list ...', rag_ctx_list());
+			rag_ctx_addclosest();
           continue;
         }
         if (command === instr.CMD_RAG_FREE.name) {

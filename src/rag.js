@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 const CONTEXT_LEN = 10;
+const CLOSEST_NUM = 5;
 export let rag_db = [];
 let rag_ctx_db = [];
 
@@ -105,6 +106,22 @@ export const rag_ctx_add = item => {
 };
 
 export const rag_ctx_list = () => rag_ctx_db;
+
+export const rag_ctx_addclosest = () => {
+  let cl_list = [];
+  rag_ctx_db.forEach(item => {
+    const target_index = rag_db.findIndex(x => item.id === x.id);
+    const start = Math.max(0, target_index - CLOSEST_NUM);
+    const end = Math.min(rag_db.length, target_index + 1 + CLOSEST_NUM);
+    const result = rag_db.slice(start, end).map(x => ({ id: x.id, text: x.text }));
+    cl_list.push(result);
+  });
+  cl_list = cl_list.flat();
+
+  cl_list = Array.from(new Map([...cl_list, ...rag_ctx_db].map(item => [item.id, item])).values());
+
+  console.log('zz1 ...closest resukts ... ', cl_list);
+};
 
 export const rag_ctx_free = () => {
   rag_ctx_db = [];
