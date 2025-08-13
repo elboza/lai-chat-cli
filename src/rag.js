@@ -1,6 +1,8 @@
 import fs from 'fs';
 
+const CONTEXT_LEN = 10;
 export let rag_db = [];
+let rag_ctx_db = [];
 
 let id = 0;
 
@@ -54,7 +56,7 @@ const import_json_data = data => {
     if (data) {
       const parsed_data = JSON.parse(data);
       if (typeof parsed_data === 'string') {
-        return [parsed_date];
+        return [parsed_data];
       }
       if (parsed_data instanceof Array) {
         return parsed_data
@@ -82,4 +84,28 @@ export const rag_import_file = filename => {
     }
     return rag_file_list;
   }
+};
+
+export const rag_ctx_add = item => {
+  if (item.id && item.text && item.sim_val) {
+    rag_ctx_db.push(item);
+    rag_ctx_db.sort((a, b) => {
+      if (a.sim_val < b.sim_val) {
+        return 1;
+      }
+      if (a.sim_val > b.sim_val) {
+        return -1;
+      }
+      return 0;
+    });
+    if (rag_ctx_db.length > CONTEXT_LEN) {
+      rag_ctx_db.pop();
+    }
+  }
+};
+
+export const rag_ctx_list = () => rag_ctx_db;
+
+export const rag_ctx_free = () => {
+  rag_ctx_db = [];
 };
