@@ -12,7 +12,8 @@ import {
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
 import {
-	rag_ctx_addclosest,
+  make_rag_msg,
+  rag_ctx_addclosest,
   rag_ctx_free,
   rag_ctx_add,
   rag_ctx_list,
@@ -326,11 +327,17 @@ export const repl = async options => {
           rag_ctx_free();
           rag_db.forEach(x => {
             const similarity = cosineSimilarity(resp?.data[0]?.embedding, x.values);
-            console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            if (options?.debug) {
+              console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            }
             rag_ctx_add({ id: x.id, text: x.text, sim_val: similarity });
           });
-          console.log('xx2 ... rag ctx list ...', rag_ctx_list());
-			rag_ctx_addclosest();
+          if (options?.debug) {
+            console.log('rag ctx list ...', rag_ctx_list());
+          }
+          const cl_list = rag_ctx_addclosest(options);
+          const rag_message = make_rag_msg(cl_list, args.join(' '), options);
+          await ai_chat(rag_message, options);
           continue;
         }
         if (command === instr.CMD_RAG_FREE.name) {
@@ -376,10 +383,17 @@ export const repl = async options => {
           rag_ctx_free();
           rag_db.forEach(x => {
             const similarity = cosineSimilarity(resp[0], x.values);
-            console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            if (options?.debug) {
+              console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            }
             rag_ctx_add({ id: x.id, text: x.text, sim_val: similarity });
           });
-          console.log('xx2 ... rag ctx list ...', rag_ctx_list());
+          if (options?.debug) {
+            console.log('rag ctx list ...', rag_ctx_list());
+          }
+          const cl_list = rag_ctx_addclosest(options);
+          const rag_message = make_rag_msg(cl_list, args.join(' '), options);
+          await google_aichat(rag_message, options);
           continue;
         }
         if (command === instr.CMD_RAG_FREE.name) {
@@ -427,10 +441,17 @@ export const repl = async options => {
           rag_ctx_free();
           rag_db.forEach(x => {
             const similarity = cosineSimilarity(resp[0], x.values);
-            console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            if (options?.debug) {
+              console.log(`[match val] ${x.text}: ${similarity.toFixed(4)}`);
+            }
             rag_ctx_add({ id: x.id, text: x.text, sim_val: similarity });
           });
-          console.log('xx2 ... rag ctx list ...', rag_ctx_list());
+          if (options?.debug) {
+            console.log('rag ctx list ...', rag_ctx_list());
+          }
+          const cl_list = rag_ctx_addclosest(options);
+          const rag_message = make_rag_msg(cl_list, args.join(' '), options);
+          await aichat(rag_message, options);
           continue;
         }
         if (command === instr.CMD_RAG_FREE.name) {
