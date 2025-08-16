@@ -126,7 +126,7 @@ const instr = {
   },
   CMD_RAG_LOOKUP: {
     name: '/rag_lookup',
-    desc: 'perform vector similarity lookup',
+    desc: 'submit your question to the model with your rag context',
   },
   CMD_RAG_FREE: {
     name: '/rag_free',

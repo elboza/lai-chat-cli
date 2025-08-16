@@ -51,6 +51,7 @@ Options:
   -t, --mcp-tools
   -k, --mcp-tools-exec
   -s, --stream
+  -r, --rag-file <string>
   -h, --help                    display help for command
 ```
 
@@ -82,12 +83,32 @@ available commands:
 /mcpt_call : direct call to a tool (/mcpt_call tool_name {...params})
 /mcpt_switch : toggle mcp tools enable/disable
 /mcpt_exec_switch : toggle mcp tools function execution
+/rag_vect : generate an embedding vector
+/rag_vect_add : add rag vector to mem
+/rag_vect_list : list mem vector list
+/rag_vect_rm : remove a vector from mem
+/rag_lookup : submit your question to the model with your rag context
+/rag_free : empty the rag mem db
+/rag_vect_search : serch for rag items by text
+/newragmodel : set a new model for rag. the format is provider:model
+/rag_import_file : import file to rag
 ```
 
 ### MCP
 
 partially implemented (only stdio transport layer for the moment).
 MCP tools are disabled by default, but you can enable it at any time via command line flags (`-t` and `-k`), config file (`enable_mcp_tools` and `enable_mcp_tools_exec`) or cli commands (`/mcpt_switch` and `/mcpt_exec_switch`).
+
+### RAG
+
+you can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_filyou can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_file`.
+
+you can list the current rag memory db via the `/rag_vect_list`
+
+you can submit your query to the model via the `/rag_lookup` command otherwise it will submit your query without the rag.
+
+remember to check your rag model (`/info`) and you can change model via `/newragmodel` .
+
 
 ### licence: L-Beerware
 
