@@ -101,7 +101,7 @@ MCP tools are disabled by default, but you can enable it at any time via command
 
 ### RAG
 
-you can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_filyou can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_file`.
+you can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_file` . You can add rag context manually via `/rag_vect_add` or add an entire text file via `/rag_import_file`.
 
 you can list the current rag memory db via the `/rag_vect_list`
 
@@ -109,6 +109,52 @@ you can submit your query to the model via the `/rag_lookup` command otherwise i
 
 remember to check your rag model (`/info`) and you can change model via `/newragmodel` .
 
+### examples
+
+```
+/* enable mcptools */
+>>> /mcpt_switch
+
+/* list mcp tools */
+>>> /mcptools
+demo__addition : addition of two numbers.
+  - props: {"num1":{"description":"Number1","type":"STRING"},"num2":{"description":"Number2","type":"STRING"}}
+  - required: ["num1","num2"]
+
+/* enable mcp tools execution */
+>>> /mcpt_exec_switch
+
+/* direct mcp tool call */
+>>> /mcpt_call demo__addition {num1: 2, num2:4}
+ tool call ... demo addition { num1: 2, num2: 4 }
+
+ sum of two numbers is 6
+
+/* the model will call the tool is needed */
+>>> 2+3
+[ llm ]:
+{"name":"demo__addition","args":{"num2":"3","num1":"2"}}
+ tool call ... demo addition { num2: '3', num1: '2' }
+
+ sum of two numbers is 5
+
+/* manually add rags ... */
+>>> /rag_vect_add my ferrari is red and goes very fast. more fast than the black lamborghini.
+>>> /rag_vect_add the sun is light and yellow.
+>>> /rag_vect_add the sea is blue.
+
+/* list rag in-memory-DB */
+>>> /rag_vect_list
+1 : my ferrari is red and goes very fast. more fast than the black lamborghini. [ 3072 values ]
+2 : the sun is light and yellow. [ 3072 values ]
+3 : the sea is blue. [ 3072 values ]
+
+/* query the llm model with rag context */
+>>> /rag_lookup what color is my ferrari ??
+[ llm ]:
+Based on the context, your Ferrari is **red**.
+
+```
 
 ### licence: L-Beerware
 
