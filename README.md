@@ -130,7 +130,7 @@ demo__addition : addition of two numbers.
 
  sum of two numbers is 6
 
-/* the model will call the tool is needed */
+/* the model will call the tool if needed */
 >>> 2+3
 [ llm ]:
 {"name":"demo__addition","args":{"num2":"3","num1":"2"}}
