@@ -5,16 +5,19 @@ const providers = Object.freeze({
   OLLAMA: 'ollama',
   COPILOT: 'copilot',
   GOOGLE: 'google',
+  BEDROCK: 'bedrock',
 });
 const default_models = Object.freeze({
   ollama: 'llama3.2',
   copilot: 'gpt-4o',
   google: 'gemini-2.5-flash',
+  bedrock: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0',
 });
 const default_rag_models = Object.freeze({
   ollama: 'bge-3m',
   copilot: 'text-embedding-3-small',
   google: 'gemini-embedding-001',
+  bedrock: '',
 });
 export const get_default_provider = () => providers.COPILOT;
 

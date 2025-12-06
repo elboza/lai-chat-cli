@@ -1,6 +1,6 @@
 {
   "name": "lai",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "ai.js",
   "bin": "lai",
   "type": "module",
@@ -16,12 +16,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@google/genai": "^1.10.0",
-    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@anthropic-ai/bedrock-sdk": "^0.26.0",
+    "@aws-sdk/client-bedrock": "^3.946.0",
+    "@google/genai": "^1.31.0",
+    "@modelcontextprotocol/sdk": "^1.24.3",
     "commander": "^14.0.0",
     "got": "^14.4.7",
     "json5": "^2.2.3",
-    "ollama": "^0.5.16"
+    "ollama": "^0.6.3"
   },
   "devDependencies": {
     "eslint": "^8.56.0",

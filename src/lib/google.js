@@ -48,6 +48,9 @@ function get_system_instructions() {
 }
 export const init = async options => {
   try {
+    if (ai) {
+      return;
+    }
     GEMINI_API_KEY = read_tokens()?.GEMINI_API_KEY;
     ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   } catch (e) {

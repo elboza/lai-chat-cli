@@ -4,11 +4,17 @@ import fs from 'fs';
 import { ai_embed as ollama_ai_embeddings, aichat, aigen } from '#root/src/lib/ollama.js';
 import { ai_embed as copilot_ai_embeddings, ai_chat, get_models } from '#root/src/lib/copilot.js';
 import {
+  init as google_init,
   get_models as google_get_models,
   aichat as google_aichat,
   aigen as google_aigen,
   ai_embeddings as google_ai_embeddings,
 } from '#root/src/lib/google.js';
+import {
+  init as bedrock_init,
+  get_models as bedrock_get_models,
+  aichat as bedrock_aichat,
+} from '#root/src/lib/bedrock.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
 import {
@@ -26,6 +32,7 @@ import {
   rag_db,
 } from '#root/src/rag.js';
 import { cosineSimilarity } from '#root/src/utils.js';
+import { get_default_model } from '#root/src/defaults.js';
 
 const instr = {
   CMD_HELP: {
@@ -76,9 +83,13 @@ const instr = {
     name: '/file',
     desc: 'read a file and add it it the chat system info',
   },
+  CMD_NEWPROVIDER: {
+    name: '/newprovider',
+    desc: 'set a new provider.',
+  },
   CMD_NEWMODEL: {
     name: '/newmodel',
-    desc: 'set a new model. the format is provider:model',
+    desc: 'set a new model.',
   },
   CMD_MODELS: {
     name: '/models',
@@ -159,6 +170,18 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
+export async function init_providers(options, update_default_model = false) {
+  if (options?.provider === 'google') {
+    await google_init(options);
+  }
+  if (options?.provider === 'bedrock') {
+    await bedrock_init(options);
+  }
+  if (update_default_model === true) {
+    options.model = get_default_model(options.provider);
+  }
+}
 
 let debug = false;
 
@@ -273,26 +296,35 @@ export const repl = async options => {
       add_message({ role: 'system', content: data });
       continue;
     }
+    if (command === instr.CMD_NEWPROVIDER.name) {
+      const provider = args.join(' ');
+      if (!provider) {
+        console.log('invalid new provider.');
+        continue;
+      }
+      options.provider = provider;
+      await init_providers(options, true);
+      continue;
+    }
     if (command === instr.CMD_NEWMODEL.name) {
-      const [provider, model] = args.join(' ').split(':');
-      console.log('model ...', provider, model);
-      if (!provider || !model) {
+      const model = args.join(' ');
+      if (!model) {
         console.log('invalid new model.');
         continue;
       }
       options.model = model;
-      options.provider = provider;
       continue;
     }
     if (command === instr.CMD_RAG_NEWMODEL.name) {
       const [provider, model] = args.join(' ').split(':');
       console.log('rag model ...', provider, model);
       if (!provider || !model) {
-        console.log('invalid new model.');
+        console.log('invalid new model. (format: provider:model)');
         continue;
       }
       options.rag_model = model;
       options.rag_provider = provider;
+      await init_providers(options);
       continue;
     }
     if (command === instr.CMD_MCPT_CALL.name) {
@@ -415,6 +447,40 @@ export const repl = async options => {
           continue;
         }
         break;
+      case 'bedrock':
+        if (command === instr.CMD_RAG_VEC.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_ADD.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_LIST.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_RM.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_LOOKUP.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_FREE.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_SEARCH.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_IMPORT_FILE.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        break;
 
       case 'ollama':
       default:
@@ -489,6 +555,14 @@ export const repl = async options => {
         }
         // await google_aigen(answer, options);
         await google_aichat(answer, options);
+        break;
+      case 'bedrock':
+        if (answer === instr.CMD_MODELS.name) {
+          await bedrock_get_models(options);
+          continue;
+        }
+        // await google_aigen(answer, options);
+        await bedrock_aichat(answer, options);
         break;
 
       case 'ollama':

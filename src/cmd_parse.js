@@ -55,9 +55,10 @@ export const cmd_parse = args => {
   if (system_prompt) {
     add_message({ role: 'system', content: system_prompt });
   }
+	const tmp_provider=options.provider || conf.provider || get_default_provider();
   const parsed_options = {
-    model: options.model || conf.model || get_default_model(get_default_provider()),
-    provider: options.provider || conf.provider || get_default_provider(),
+    model: options.model || conf.model || get_default_model(tmp_provider),
+    provider: tmp_provider,
     debug: !!options.debug || !!conf.debug,
     system_prompt,
     stream: !!options.stream || !!conf.stream,
@@ -68,6 +69,9 @@ export const cmd_parse = args => {
     rag_provider: options.provider || conf.rag_provider || get_default_rag_provider(),
     rag_file: options.ragFile,
   };
+	if(options.provider) {
+		parsed_options.model=options.model || get_default_model(tmp_provider) || conf.model;
+	}
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);
   }

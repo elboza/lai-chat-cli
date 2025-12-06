@@ -36,6 +36,10 @@ download ollama (and set it up) and run it with `ollama serve`
 
 get google ai api key from google ai portal, and place it into `src/tokens/google_tokens.js` created from the `src/tokens/google_tokens.json.template` file
 
+#### bedrock
+
+you should have configured AWS credentials in a way that the AWS Node SDK will recognise, typicaly a shared `~/.aws/credentials` file or `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY` environment variables.
+
 ### run
 
 ```
@@ -75,7 +79,8 @@ available commands:
 /system : add a chat system info
 /filesubmit : read a file content and sent it to the model as an input
 /file : read a file and add it it the chat system info
-/newmodel : set a new model. the format is provider:model
+/newprovider : set a new provider.
+/newmodel : set a new model.
 /models : show available models
 /showmodelname : toggle show model name in response
 /refresh : print again all chat logs to console
