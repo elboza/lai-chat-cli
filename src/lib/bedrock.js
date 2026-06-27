@@ -38,7 +38,11 @@ export const aichat = async (prompt, options) => {
   add_message({ role: 'user', content: prompt });
   const req = {
     model: options?.model || 'anthropic.claude-sonnet-4-5-20250929-v1:0',
-    messages: get_messages(),
+    system: get_messages()
+      .filter(message => message.role === 'system')
+      .map(m => m.content)
+      .join(' '),
+    messages: get_messages().filter(m => m.role !== 'system'),
     max_tokens: 1024,
     tools: options?.enable_mcp_tools ? tools_to_bedrock(get_tools()) : undefined,
   };

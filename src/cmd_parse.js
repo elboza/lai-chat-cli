@@ -11,6 +11,14 @@ import { add_message } from '#root/src/history.js';
 
 const program = new Command();
 
+function parse_provider(provider) {
+  if (!provider) {
+    return { tmp_provider: undefined, project: undefined };
+  }
+  const [prov, proj] = provider.split(':');
+  return { tmp_provider: prov, project: proj };
+}
+
 function get_system_prompt(sprompt) {
   if (!sprompt) {
     return;
@@ -55,7 +63,7 @@ export const cmd_parse = args => {
   if (system_prompt) {
     add_message({ role: 'system', content: system_prompt });
   }
-	const tmp_provider=options.provider || conf.provider || get_default_provider();
+  const { tmp_provider, project } = parse_provider(options.provider || conf.provider || get_default_provider());
   const parsed_options = {
     model: options.model || conf.model || get_default_model(tmp_provider),
     provider: tmp_provider,
@@ -68,10 +76,11 @@ export const cmd_parse = args => {
     rag_model: options.model || conf.rag_model || get_default_rag_model(get_default_provider()),
     rag_provider: options.provider || conf.rag_provider || get_default_rag_provider(),
     rag_file: options.ragFile,
+    bedrock_mantle_project: project,
   };
-	if(options.provider) {
-		parsed_options.model=options.model || get_default_model(tmp_provider) || conf.model;
-	}
+  if (options.provider) {
+    parsed_options.model = options.model || get_default_model(tmp_provider) || conf.model;
+  }
   if (parsed_options.debug) {
     console.log('cmd options:', options, parsed_options);
   }

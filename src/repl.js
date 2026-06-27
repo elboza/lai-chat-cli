@@ -15,6 +15,11 @@ import {
   get_models as bedrock_get_models,
   aichat as bedrock_aichat,
 } from '#root/src/lib/bedrock.js';
+import {
+  init as bedrock_mantle_init,
+  get_models as bedrock_mantle_get_models,
+  aichat as bedrock_mantle_aichat,
+} from '#root/src/lib/bedrock_mantle.js';
 import { refresh_chat, add_message, reset_messages } from '#root/src/history.js';
 import { load_mcp, free_mcp, mcpt_call, get_tools } from '#root/src/mcp.js';
 import {
@@ -178,6 +183,9 @@ export async function init_providers(options, update_default_model = false) {
   if (options?.provider === 'bedrock') {
     await bedrock_init(options);
   }
+  if (options?.provider === 'bedrock_mantle') {
+    await bedrock_mantle_init(options, true);
+  }
   if (update_default_model === true) {
     options.model = get_default_model(options.provider);
   }
@@ -313,6 +321,7 @@ export const repl = async options => {
         continue;
       }
       options.model = model;
+      await init_providers(options, true);
       continue;
     }
     if (command === instr.CMD_RAG_NEWMODEL.name) {
@@ -482,6 +491,41 @@ export const repl = async options => {
         }
         break;
 
+      case 'bedrock_mantle':
+        if (command === instr.CMD_RAG_VEC.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_ADD.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_LIST.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_VEC_RM.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_LOOKUP.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_FREE.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_SEARCH.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        if (command === instr.CMD_RAG_IMPORT_FILE.name) {
+          console.log('RAG is not supported for bedrock.');
+          continue;
+        }
+        break;
+
       case 'ollama':
       default:
         if (command === instr.CMD_RAG_VEC.name) {
@@ -563,6 +607,14 @@ export const repl = async options => {
         }
         // await google_aigen(answer, options);
         await bedrock_aichat(answer, options);
+        break;
+      case 'bedrock_mantle':
+        if (answer === instr.CMD_MODELS.name) {
+          await bedrock_mantle_get_models(options);
+          continue;
+        }
+        // await google_aigen(answer, options);
+        await bedrock_mantle_aichat(answer, options);
         break;
 
       case 'ollama':

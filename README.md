@@ -36,7 +36,7 @@ download ollama (and set it up) and run it with `ollama serve`
 
 get google ai api key from google ai portal, and place it into `src/tokens/google_tokens.js` created from the `src/tokens/google_tokens.json.template` file
 
-#### bedrock
+#### bedrock & bedrock-mantle
 
 you should have configured AWS credentials in a way that the AWS Node SDK will recognise, typicaly a shared `~/.aws/credentials` file or `AWS_ACCESS_KEY_ID` & `AWS_SECRET_ACCESS_KEY` environment variables.
 

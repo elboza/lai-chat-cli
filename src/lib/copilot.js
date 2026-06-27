@@ -166,7 +166,7 @@ export const ai_embed = async (text, options) => {
     },
     body: JSON.stringify({
       model: options?.rag_model || 'text-embedding-3-small',
-      input: typeof(text) === 'string' ? [text] : text,
+      input: typeof text === 'string' ? [text] : text,
     }),
   };
 
@@ -176,7 +176,7 @@ export const ai_embed = async (text, options) => {
       const resp = await got(req).json();
       // console.log(resp);
       retry = 0;
-		return resp;
+      return resp;
     } catch (e) {
       // console.error('err ...', e);
       console.log('...               ');

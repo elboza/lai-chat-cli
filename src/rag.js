@@ -107,7 +107,7 @@ export const rag_ctx_add = item => {
 
 export const rag_ctx_list = () => rag_ctx_db;
 
-export const rag_ctx_addclosest = (options) => {
+export const rag_ctx_addclosest = options => {
   let cl_list = [];
   rag_ctx_db.forEach(item => {
     const target_index = rag_db.findIndex(x => item.id === x.id);
@@ -120,25 +120,25 @@ export const rag_ctx_addclosest = (options) => {
 
   cl_list = Array.from(new Map([...cl_list, ...rag_ctx_db].map(item => [item.id, item])).values());
 
-	if(options?.debug) {
-  console.log('closest results ... ', cl_list);
-	}
-	return cl_list;
+  if (options?.debug) {
+    console.log('closest results ... ', cl_list);
+  }
+  return cl_list;
 };
 
 export const rag_ctx_free = () => {
   rag_ctx_db = [];
 };
 
-export const make_rag_msg= (cl_list, text, options) => {
-			const rag_context=cl_list.map(x=>x.text).join('\n');
-			const message=`based on this context:
+export const make_rag_msg = (cl_list, text, options) => {
+  const rag_context = cl_list.map(x => x.text).join('\n');
+  const message = `based on this context:
 ${rag_context}
 
 answer this question: ${text}
 			`;
-			if(options?.debug) {
-			console.log('rag msg ... ', message);
-			}
-	return message;
+  if (options?.debug) {
+    console.log('rag msg ... ', message);
+  }
+  return message;
 };
