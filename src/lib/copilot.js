@@ -48,7 +48,9 @@ const get_chat_token = async (new_token = false) => {
     },
   };
   try {
-    const resp = await got(req).json();
+    const { url } = req;
+    delete req.url;
+    const resp = await got(url, req).json();
     const tokens = read_tokens();
     tokens.chat_token = resp?.token;
     write_tokens(tokens);
@@ -65,9 +67,11 @@ const make_request = async (req, options) => {
     console.log('req ...', req);
   }
   let retry = 2;
+  const { url } = req;
+  delete req.url;
   while (retry > 0) {
     try {
-      const resp = await got(req).json();
+      const resp = await got(url, req).json();
       if (options?.return_response) {
         return resp;
       }
@@ -171,9 +175,11 @@ export const ai_embed = async (text, options) => {
   };
 
   let retry = 2;
+  const { url } = req;
+  delete req.url;
   while (retry > 0) {
     try {
-      const resp = await got(req).json();
+      const resp = await got(url, req).json();
       // console.log(resp);
       retry = 0;
       return resp;
